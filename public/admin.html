@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Eagle Event</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para a tabela do admin */
+        .admin-container { padding-top: 100px; min-height: 80vh; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #112240; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #233554; color: #ccd6f6; }
+        th { background-color: #0a192f; color: #64ffda; font-family: 'Orbitron', sans-serif; }
+        tr:hover { background-color: #1d2d50; }
+        .back-link { color: #64ffda; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">EAGLE <span style="font-size: 0.5em; color: #64ffda;">ADMIN</span></div>
+            <a href="index.html" class="back-link">Voltar ao Site</a>
+        </div>
+    </nav>
+
+    <div class="container admin-container">
+        <h2 class="section-title">Lista de Participantes</h2>
+        <div style="overflow-x:auto;">
+            <table id="participantsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Turma</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>Data Inscrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão inseridos via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Script simples embutido para carregar dados
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/participants');
+                const result = await response.json();
+                const tbody = document.querySelector('#participantsTable tbody');
+
+                if(result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhum inscrito ainda.</td></tr>';
+                    return;
+                }
+
+                result.data.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.matricula || '-'}</td>
+                        <td>${user.turma || '-'}</td>
+                        <td>${user.phone || '-'}</td>
+                        <td>${user.email}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('pt-BR')}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar lista de participantes.');
+            }
+        });
+    </script>
+</body>
+</html>

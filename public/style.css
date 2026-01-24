@@ -1,0 +1,317 @@
+:root {
+    --primary-blue: #007bff;
+    --neon-blue: #64ffda;
+    --dark-bg: #020c1b;
+    --light-bg: #0a192f;
+    --text-main: #ccd6f6;
+    --text-muted: #8892b0;
+    --white: #ffffff;
+    --gradient: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--white);
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    position: sticky;
+    top: 0;
+    background-color: rgba(2, 12, 27, 0.95);
+    padding: 1rem 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--primary-blue);
+    text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--neon-blue);
+}
+
+.btn-nav {
+    border: 1px solid var(--neon-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    color: var(--neon-blue) !important;
+}
+
+.btn-nav:hover {
+    background: rgba(100, 255, 218, 0.1);
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #112240 0%, #020c1b 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.hero-content {
+    z-index: 1;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.btn-cta {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: var(--primary-blue);
+    color: var(--white);
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 50px;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.6);
+}
+
+/* Sections */
+.section {
+    padding: 5rem 0;
+}
+
+.bg-darker {
+    background-color: #051021;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.section-title span {
+    color: var(--primary-blue);
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--neon-blue);
+    margin-top: -2.5rem;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+}
+
+/* About Grid */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.about-card {
+    background: var(--light-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    transition: transform 0.3s;
+    border: 1px solid transparent;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-blue);
+}
+
+.about-card h3 {
+    margin-bottom: 1rem;
+    color: var(--neon-blue);
+}
+
+/* Steps */
+.steps {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.step {
+    text-align: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: var(--light-bg);
+    border: 2px solid var(--primary-blue);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+}
+
+/* Form */
+.form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--light-bg);
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--neon-blue);
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #233554;
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    background: rgba(255,255,255,0.1);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--gradient);
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.btn-submit:hover {
+    opacity: 0.9;
+}
+
+.message {
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.success { color: var(--neon-blue); }
+.error { color: #ff6b6b; }
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    background: #020c1b;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.admin-link {
+    display: block;
+    margin-top: 10px;
+    color: #233554;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.admin-link:hover { color: var(--primary-blue); }
+
+/* Mobile */
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* Simplificação para o exemplo */
+    .hero h1 { font-size: 2.5rem; }
+}

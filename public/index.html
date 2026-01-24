@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eagle Event | Tecnologia e Inovação</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fonte Futurista/Moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate On Scroll CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">EAGLE</div>
+            <ul class="nav-links">
+                <li><a href="#home">Início</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#como-funciona">Como Funciona</a></li>
+                <li><a href="#inscricao" class="btn-nav">Inscreva-se</a></li>
+            </ul>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1 data-aos="fade-down" data-aos-duration="1000">O Futuro Pousou Aqui.</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Tecnologia, inovação e diversão em uma experiência imersiva única.</p>
+            <a href="#inscricao" class="btn-cta" data-aos="zoom-in" data-aos-delay="400">Garanta sua Vaga</a>
+        </div>
+    </section>
+
+    <!-- Sobre o Evento -->
+    <section id="sobre" class="section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Sobre o <span>Eagle</span></h2>
+            <div class="about-grid">
+                <div class="about-card" data-aos="flip-left" data-aos-delay="100">
+                    <h3><i class="fas fa-rocket"></i> Tecnologia</h3>
+                    <p>Workshops e palestras sobre as últimas tendências do mercado tech.</p>
+                </div>
+                <div class="about-card" data-aos="flip-left" data-aos-delay="200">
+                    <h3><i class="fas fa-gamepad"></i> Diversão</h3>
+                    <p>Área gamer, campeonatos e momentos de descontração.</p>
+                </div>
+                <div class="about-card" data-aos="flip-left" data-aos-delay="300">
+                    <h3><i class="fas fa-book-open"></i> Aprendizado</h3>
+                    <p>Minicursos práticos para você sair com conhecimento aplicável.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section id="como-funciona" class="section bg-darker">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-right">Como Funciona</h2>
+            <p class="section-subtitle" data-aos="fade-left">Data do Evento: <strong>15 de Novembro de 2024</strong></p>
+            
+            <div class="steps">
+                <div class="step" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">1</div>
+                    <h3>Inscrição</h3>
+                    <p>Preencha o formulário abaixo para garantir seu lugar.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">2</div>
+                    <h3>Check-in</h3>
+                    <p>Receba seu crachá e kit de boas-vindas no dia do evento.</p>
+                </div>
+                <div class="step" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">3</div>
+                    <h3>Imersão</h3>
+                    <p>Aproveite 12 horas de conteúdo e networking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulário de Inscrição -->
+    <section id="inscricao" class="section">
+        <div class="container">
+            <h2 class="section-title" data-aos="zoom-in">Inscreva-se Agora</h2>
+            <div class="form-wrapper" data-aos="fade-up">
+                <form id="registrationForm">
+                    <div class="input-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" name="name" required placeholder="Seu nome">
+                    </div>
+                    <div class="input-group">
+                        <label for="matricula">Matrícula</label>
+                        <input type="text" id="matricula" name="matricula" placeholder="Sua matrícula">
+                    </div>
+                    <div class="input-group">
+                        <label for="turma">Turma</label>
+                        <input type="text" id="turma" name="turma" placeholder="Sua turma">
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(XX) 9XXXX-XXXX">
+                    </div>
+                    <div class="input-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    </div>
+                    <button type="submit" class="btn-submit">Confirmar Inscrição</button>
+                    <p id="formMessage" class="message"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Eagle Event. Todos os direitos reservados.</p>
+            <a href="admin.html" class="admin-link">Área do Organizador</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
+</body>
+</html>
