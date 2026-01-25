@@ -14,11 +14,12 @@
     <nav class="navbar">
         <div class="container nav-container">
             <div class="logo">
-                <img src="logoEagle.png" alt="Eagle Event Logo">
+                 <img src="logoEagle.png" alt="Eagle Event Logo">
             </div>
             <ul class="nav-links">
                 <li><a href="#home">Início</a></li>
                 <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#galeria">Fotos</a></li>
                 <li><a href="#como-funciona">Como Funciona</a></li>
                 <li><a href="#inscricao" class="btn-nav">Inscreva-se</a></li>
             </ul>
@@ -46,23 +47,77 @@
             <h2 class="section-title" data-aos="fade-up">Sobre o <span>Eagle</span></h2>
             <div class="about-grid">
                 <div class="about-card" data-aos="flip-left" data-aos-delay="100">
-                    <h3><i class="fas fa-rocket"></i> Tecnologia</h3>
-                    <p>Workshops e palestras sobre as últimas tendências do mercado tech.</p>
+                    <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Tecnologia de Ponta</h3>
+                    <p>Mergulhe em workshops práticos e palestras sobre IA, Cloud Computing e as tendências que estão moldando o amanhã.</p>
                 </div>
                 <div class="about-card" data-aos="flip-left" data-aos-delay="200">
-                    <h3><i class="fas fa-gamepad"></i> Diversão</h3>
-                    <p>Área gamer, campeonatos e momentos de descontração.</p>
+                    <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                    <h3>Arena Gamer</h3>
+                    <p>Desafie seus amigos em nossa área free-play, participe de campeonatos de e-sports e ganhe prêmios exclusivos.</p>
                 </div>
                 <div class="about-card" data-aos="flip-left" data-aos-delay="300">
-                    <h3><i class="fas fa-book-open"></i> Aprendizado</h3>
-                    <p>Minicursos práticos para você sair com conhecimento aplicável.</p>
+                    <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>Networking</h3>
+                    <p>Conecte-se com profissionais da indústria, mentores e outros estudantes apaixonados por tecnologia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria de Edições Anteriores -->
+    <section id="galeria" class="section bg-darker">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Fotos das Edições <span>Anteriores</span></h2>
+            
+            <div class="carousel-wrapper" data-aos="zoom-in">
+                <button class="carousel-btn btn-prev"><i class="fas fa-chevron-left"></i></button>
+                
+                <div class="carousel-track-container">
+                    <ul class="carousel-track">
+                        <li class="carousel-slide current-slide">
+                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 1">
+                            <div class="slide-caption">Eagle 2022 - Abertura</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 2">
+                            <div class="slide-caption">Hackathon Noturno</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1505373877841-8d43f703f8ca?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 3">
+                            <div class="slide-caption">Palestras Principais</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 4">
+                            <div class="slide-caption">Área de Networking</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 5">
+                            <div class="slide-caption">Workshops Práticos</div>
+                        </li>
+                        <li class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1475721027767-4d06338ac966?auto=format&fit=crop&w=1000&q=80" alt="Evento Tech 6">
+                            <div class="slide-caption">Premiação Final</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <button class="carousel-btn btn-next"><i class="fas fa-chevron-right"></i></button>
+                
+                <div class="carousel-nav">
+                    <button class="carousel-indicator current-indicator"></button>
+                    <button class="carousel-indicator"></button>
+                    <button class="carousel-indicator"></button>
+                    <button class="carousel-indicator"></button>
+                    <button class="carousel-indicator"></button>
+                    <button class="carousel-indicator"></button>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Como Funciona -->
-    <section id="como-funciona" class="section bg-darker">
+    <section id="como-funciona" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="fade-right">Como Funciona</h2>
             <p class="section-subtitle" data-aos="fade-left">Data do Evento: <strong>15 de Novembro de 2024</strong></p>
@@ -131,5 +186,92 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="script.js"></script>
+    
+    <!-- Script do Carrossel -->
+    <script>
+        const track = document.querySelector('.carousel-track');
+        const slides = Array.from(track.children);
+        const nextButton = document.querySelector('.btn-next');
+        const prevButton = document.querySelector('.btn-prev');
+        const dotsNav = document.querySelector('.carousel-nav');
+        const dots = Array.from(dotsNav.children);
+
+        const slideWidth = slides[0].getBoundingClientRect().width;
+
+        // Posicionar slides um ao lado do outro
+        const setSlidePosition = (slide, index) => {
+            slide.style.left = slideWidth * index + 'px';
+        };
+        slides.forEach(setSlidePosition);
+
+        const moveToSlide = (track, currentSlide, targetSlide) => {
+            track.style.transform = 'translateX(-' + targetSlide.style.left + ')';
+            currentSlide.classList.remove('current-slide');
+            targetSlide.classList.add('current-slide');
+        }
+
+        const updateDots = (currentDot, targetDot) => {
+            currentDot.classList.remove('current-indicator');
+            targetDot.classList.add('current-indicator');
+        }
+
+        // Clique na direita
+        nextButton.addEventListener('click', e => {
+            const currentSlide = track.querySelector('.current-slide');
+            let nextSlide = currentSlide.nextElementSibling;
+            const currentDot = dotsNav.querySelector('.current-indicator');
+            let nextDot = currentDot.nextElementSibling;
+
+            // Loop infinito (se chegar no fim, volta pro inicio)
+            if (!nextSlide) {
+                nextSlide = slides[0];
+                nextDot = dots[0];
+            }
+
+            moveToSlide(track, currentSlide, nextSlide);
+            updateDots(currentDot, nextDot);
+        });
+
+        // Clique na esquerda
+        prevButton.addEventListener('click', e => {
+            const currentSlide = track.querySelector('.current-slide');
+            let prevSlide = currentSlide.previousElementSibling;
+            const currentDot = dotsNav.querySelector('.current-indicator');
+            let prevDot = currentDot.previousElementSibling;
+
+            // Loop infinito reverso
+            if (!prevSlide) {
+                prevSlide = slides[slides.length - 1];
+                prevDot = dots[dots.length - 1];
+            }
+
+            moveToSlide(track, currentSlide, prevSlide);
+            updateDots(currentDot, prevDot);
+        });
+
+        // Clique nos indicadores (bolinhas)
+        dotsNav.addEventListener('click', e => {
+            const targetDot = e.target.closest('button');
+            if (!targetDot) return;
+
+            const currentSlide = track.querySelector('.current-slide');
+            const currentDot = dotsNav.querySelector('.current-indicator');
+            const targetIndex = dots.findIndex(dot => dot === targetDot);
+            const targetSlide = slides[targetIndex];
+
+            moveToSlide(track, currentSlide, targetSlide);
+            updateDots(currentDot, targetDot);
+        });
+
+        // Ajuste responsivo ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            const newSlideWidth = slides[0].getBoundingClientRect().width;
+            slides.forEach((slide, index) => {
+                slide.style.left = newSlideWidth * index + 'px';
+            });
+            const currentSlide = track.querySelector('.current-slide');
+            track.style.transform = 'translateX(-' + currentSlide.style.left + ')';
+        });
+    </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ const authMiddleware = (req, res, next) => {
     // Verifica se a rota é protegida
     if (req.path === '/admin.html' || req.path === '/api/participants') {
         const auth = { 
-            login: process.env.ADMIN_USER, 
+             login: process.env.ADMIN_USER, 
             password: process.env.ADMIN_PASS 
         }; 
         const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
