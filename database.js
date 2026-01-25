@@ -1,12 +1,11 @@
 const { Pool } = require('pg');
 
-// Configuração da conexão com PostgreSQL
-// Em produção, a variável de ambiente DATABASE_URL será fornecida automaticamente pelo host (Render, Railway, etc)
+
 const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:senha@localhost:5432/eagle_event';
 
 const pool = new Pool({
     connectionString,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false // SSL necessário para produção
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false 
 });
 
 if (process.env.DATABASE_URL) {
@@ -15,7 +14,7 @@ if (process.env.DATABASE_URL) {
     console.log('💻 Conectado ao banco de dados local.');
 }
 
-// Inicializa o banco de dados
+
 const initDb = async () => {
     try {
         await pool.query(`CREATE TABLE IF NOT EXISTS participants (

@@ -1,4 +1,3 @@
-// Inicializa as animações de scroll
 AOS.init();
 
 document.getElementById('registrationForm').addEventListener('submit', async function(e) {
@@ -7,7 +6,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     const submitBtn = document.querySelector('.btn-submit');
     const messageEl = document.getElementById('formMessage');
     
-    // Dados do formulário
     const formData = {
         name: document.getElementById('name').value,
         matricula: document.getElementById('matricula').value,
@@ -16,7 +14,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         email: document.getElementById('email').value
     };
 
-    // Feedback visual de carregamento
     submitBtn.textContent = 'Enviando...';
     submitBtn.disabled = true;
     messageEl.textContent = '';
@@ -64,7 +61,6 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     }
 });
 
-// Efeito suave de scroll para links âncora
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();

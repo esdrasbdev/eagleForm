@@ -57,6 +57,13 @@ h1, h2, h3, .logo {
     letter-spacing: 2px;
     color: var(--primary-blue);
     text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 70px; /* Ajuste a altura conforme sua logo */
+    width: auto;
 }
 
 .nav-links {
@@ -85,6 +92,21 @@ h1, h2, h3, .logo {
 
 .btn-nav:hover {
     background: rgba(100, 255, 218, 0.1);
+}
+
+/* Menu Mobile (Escondido no PC) */
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: var(--text-main);
+    transition: all 0.3s ease;
 }
 
 /* Hero Section */
@@ -313,5 +335,6 @@ footer {
 /* Mobile */
 @media (max-width: 768px) {
     .nav-links { display: none; } /* Simplificação para o exemplo */
+    .menu-toggle { display: block; }
     .hero h1 { font-size: 2.5rem; }
 }

@@ -11,7 +11,10 @@ const PORT = 3000;
 const authMiddleware = (req, res, next) => {
     // Verifica se a rota é protegida
     if (req.path === '/admin.html' || req.path === '/api/participants') {
-        const auth = { login: 'admin', password: 'eagle123' }; // Defina sua senha aqui
+        const auth = { 
+            login: process.env.ADMIN_USER, 
+            password: process.env.ADMIN_PASS 
+        }; 
         const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
         const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
@@ -65,6 +68,10 @@ app.get('/api/participants', async (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Servidor rodando em http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
