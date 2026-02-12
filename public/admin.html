@@ -12,10 +12,40 @@
         /* Estilos específicos para a tabela do admin */
         .admin-container { padding-top: 100px; min-height: 80vh; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #112240; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #233554; color: #ccd6f6; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #233554; color: #ccd6f6; vertical-align: top; }
         th { background-color: #0a192f; color: #64ffda; font-family: 'Orbitron', sans-serif; }
         tr:hover { background-color: #1d2d50; }
         .back-link { color: #64ffda; text-decoration: none; font-weight: bold; }
+        td ul { list-style: none; padding: 0; margin: 0; }
+        td li { margin-bottom: 5px; }
+
+        /* Estilos do Modal de Login */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 12, 27, 0.95); /* Fundo escuro quase opaco */
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: #112240; padding: 40px; border-radius: 10px;
+            border: 1px solid #64ffda; box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+            text-align: center; width: 90%; max-width: 400px;
+        }
+        .login-box h2 { color: #ccd6f6; margin-bottom: 20px; font-family: 'Orbitron', sans-serif; }
+        .login-input {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: #0a192f; border: 1px solid #233554; color: #fff;
+            border-radius: 4px; font-size: 1rem;
+        }
+        .login-btn {
+            width: 100%; padding: 12px; background: #64ffda; color: #0a192f;
+            border: none; font-weight: bold; cursor: pointer; border-radius: 4px;
+            font-size: 1rem; transition: 0.3s;
+        }
+        .login-btn:hover { background: #00bfa5; }
+        .error-msg { color: #ff6b6b; margin-top: 10px; display: none; font-size: 0.9rem; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -26,18 +56,25 @@
         </div>
     </nav>
 
+    <!-- Modal de Login (Aparece ao entrar) -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>Acesso Restrito</h2>
+            <input type="text" id="adminUser" class="login-input" placeholder="Usuário" autocomplete="off">
+            <input type="password" id="adminPass" class="login-input" placeholder="Senha">
+            <button id="btnLogin" class="login-btn">Entrar</button>
+            <p id="loginError" class="error-msg">Credenciais inválidas!</p>
+        </div>
+    </div>
+
     <div class="container admin-container">
-        <h2 class="section-title">Lista de Participantes</h2>
+        <h2 class="section-title">Lista de Times Inscritos</h2>
         <div style="overflow-x:auto;">
-            <table id="participantsTable">
+            <table id="teamsTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Matrícula</th>
-                        <th>Turma</th>
-                        <th>Telefone</th>
-                        <th>E-mail</th>
+                        <th>Nome do Time</th>
+                        <th>Integrantes</th>
                         <th>Data Inscrição</th>
                     </tr>
                 </thead>
@@ -49,34 +86,78 @@
     </div>
 
     <script>
-        // Script simples embutido para carregar dados
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/api/participants');
-                const result = await response.json();
-                const tbody = document.querySelector('#participantsTable tbody');
+            const overlay = document.getElementById('loginOverlay');
+            const btnLogin = document.getElementById('btnLogin');
+            const errorMsg = document.getElementById('loginError');
 
-                if(result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhum inscrito ainda.</td></tr>';
+            // Função para tentar carregar os dados
+            async function loadData(user, pass) {
+                // Cria o header de autenticação Basic Auth manualmente
+                const headers = {};
+                if (user && pass) {
+                    headers['Authorization'] = 'Basic ' + btoa(user + ":" + pass);
+                }
+
+                try {
+                    const response = await fetch('/api/participants', { headers });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        renderTable(result.data);
+                        overlay.classList.add('hidden'); // Esconde o login se deu certo
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            }
+
+            // Evento do botão de login
+            btnLogin.addEventListener('click', async () => {
+                const u = document.getElementById('adminUser').value;
+                const p = document.getElementById('adminPass').value;
+                btnLogin.textContent = 'Verificando...';
+                
+                const success = await loadData(u, p);
+                
+                if (!success) {
+                    errorMsg.style.display = 'block';
+                    btnLogin.textContent = 'Entrar';
+                }
+            });
+
+            // Função para renderizar a tabela (separada para organizar)
+            function renderTable(data) {
+                const tbody = document.querySelector('#teamsTable tbody');
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Nenhuma equipe inscrita ainda.</td></tr>';
                     return;
                 }
 
-                result.data.forEach(user => {
+                tbody.innerHTML = ''; // Limpa antes de preencher
+                data.forEach(team => {
+                    const members = team.members; // O campo members vem como JSON do banco
+                    
+                    // Cria lista HTML de todos os membros
+                    let membersHtml = '<ul>';
+                    members.forEach((m, index) => {
+                        const role = index === 0 ? '<span style="color: #64ffda; font-weight: bold;">(Líder)</span>' : '';
+                        membersHtml += `<li>• <strong>${m.name}</strong> ${role}<br><small style="opacity: 0.7;">Mat: ${m.matricula} | ${m.email} | Tel: ${m.phone || 'N/A'}</small></li>`;
+                    });
+                    membersHtml += '</ul>';
+
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.name}</td>
-                        <td>${user.matricula || '-'}</td>
-                        <td>${user.turma || '-'}</td>
-                        <td>${user.phone || '-'}</td>
-                        <td>${user.email}</td>
-                        <td>${new Date(user.created_at).toLocaleDateString('pt-BR')}</td>
+                        <td style="font-weight:bold; color:#64ffda">${team.team_name}</td>
+                        <td>${membersHtml}</td>
+                        <td>${new Date(team.created_at).toLocaleDateString('pt-BR')}</td>
                     `;
                     tbody.appendChild(tr);
                 });
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                alert('Erro ao carregar lista de participantes.');
             }
         });
     </script>

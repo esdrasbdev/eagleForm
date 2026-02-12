@@ -8,10 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Previne erro 404 de favicon -->
     <link rel="icon" href="data:,">
 </head>
-<body>
+<body class="no-js">
 
     <nav class="navbar">
         <div class="container nav-container">
@@ -33,7 +32,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
@@ -43,7 +41,6 @@
         </div>
     </section>
 
-    <!-- Sobre o Evento -->
     <section id="sobre" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Sobre o <span>Eagle</span></h2>
@@ -67,7 +64,6 @@
         </div>
     </section>
 
-    <!-- Galeria de Edições Anteriores -->
     <section id="galeria" class="section bg-darker">
         <div class="container">
             <h2 class="section-title" data-aos="fade-up">Fotos das Edições <span>Anteriores</span></h2>
@@ -118,7 +114,6 @@
         </div>
     </section>
 
-    <!-- Como Funciona -->
     <section id="como-funciona" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="fade-right">Como Funciona</h2>
@@ -144,120 +139,113 @@
         </div>
     </section>
 
-    <!-- Formulário de Inscrição -->
     <section id="inscricao" class="section">
         <div class="container">
             <h2 class="section-title" data-aos="zoom-in">Inscreva-se Agora</h2>
             <div class="form-wrapper" data-aos="fade-up">
                 <form id="registrationForm">
                     
-                    <!-- Nome do Time -->
                     <div class="input-group" style="margin-bottom: 30px; border-bottom: 2px solid #64ffda; padding-bottom: 20px;">
                         <label for="teamName" style="font-size: 1.2rem; color: #64ffda;">Nome da Equipe</label>
-                        <input type="text" id="teamName" name="teamName" required placeholder="Digite o nome criativo da sua equipe">
+                        <input type="text" id="teamName" name="teamName" required placeholder="Digite o nome criativo da sua equipe" maxlength="100">
                     </div>
 
-                    <!-- Integrante 1 (Líder) -->
                     <h3 style="color: #ccd6f6; margin-bottom: 15px;">Integrante 1 (Líder)</h3>
                     <div class="input-group">
                         <label>Nome Completo</label>
-                        <input type="text" class="member-name" required placeholder="Nome do líder">
+                        <input type="text" class="member-name" required placeholder="Nome do líder" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Matrícula</label>
-                        <input type="text" class="member-matricula" required placeholder="Matrícula do líder">
+                        <input type="text" class="member-matricula" required placeholder="Matrícula do líder" maxlength="20">
                     </div>
                     <div class="input-group">
                         <label>E-mail</label>
-                        <input type="email" class="member-email" required placeholder="Email do líder">
+                        <input type="email" class="member-email" required placeholder="Email do líder" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX">
+                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX" maxlength="20">
                     </div>
 
                     <hr style="border-color: #233554; margin: 20px 0;">
 
-                    <!-- Integrante 2 -->
                     <h3 style="color: #ccd6f6; margin-bottom: 15px;">Integrante 2</h3>
                     <div class="input-group">
                         <label>Nome Completo</label>
-                        <input type="text" class="member-name" required placeholder="Nome do integrante">
+                        <input type="text" class="member-name" required placeholder="Nome do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Matrícula</label>
-                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante">
+                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante" maxlength="20">
                     </div>
                     <div class="input-group">
                         <label>E-mail</label>
-                        <input type="email" class="member-email" required placeholder="Email do integrante">
+                        <input type="email" class="member-email" required placeholder="Email do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX">
+                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX" maxlength="20">
                     </div>
 
                     <hr style="border-color: #233554; margin: 20px 0;">
 
-                    <!-- Integrante 3 -->
                     <h3 style="color: #ccd6f6; margin-bottom: 15px;">Integrante 3</h3>
                     <div class="input-group">
                         <label>Nome Completo</label>
-                        <input type="text" class="member-name" required placeholder="Nome do integrante">
+                        <input type="text" class="member-name" required placeholder="Nome do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Matrícula</label>
-                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante">
+                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante" maxlength="20">
                     </div>
                     <div class="input-group">
                         <label>E-mail</label>
-                        <input type="email" class="member-email" required placeholder="Email do integrante">
+                        <input type="email" class="member-email" required placeholder="Email do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX">
+                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX" maxlength="20">
                     </div>
 
                     <hr style="border-color: #233554; margin: 20px 0;">
 
-                    <!-- Integrante 4 -->
                     <h3 style="color: #ccd6f6; margin-bottom: 15px;">Integrante 4</h3>
                     <div class="input-group">
                         <label>Nome Completo</label>
-                        <input type="text" class="member-name" required placeholder="Nome do integrante">
+                        <input type="text" class="member-name" required placeholder="Nome do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Matrícula</label>
-                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante">
+                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante" maxlength="20">
                     </div>
                     <div class="input-group">
                         <label>E-mail</label>
-                        <input type="email" class="member-email" required placeholder="Email do integrante">
+                        <input type="email" class="member-email" required placeholder="Email do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX">
+                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX" maxlength="20">
                     </div>
 
                     <hr style="border-color: #233554; margin: 20px 0;">
 
-                    <!-- Integrante 5 -->
                     <h3 style="color: #ccd6f6; margin-bottom: 15px;">Integrante 5</h3>
                     <div class="input-group">
                         <label>Nome Completo</label>
-                        <input type="text" class="member-name" required placeholder="Nome do integrante">
+                        <input type="text" class="member-name" required placeholder="Nome do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Matrícula</label>
-                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante">
+                        <input type="text" class="member-matricula" required placeholder="Matrícula do integrante" maxlength="20">
                     </div>
                     <div class="input-group">
                         <label>E-mail</label>
-                        <input type="email" class="member-email" required placeholder="Email do integrante">
+                        <input type="email" class="member-email" required placeholder="Email do integrante" maxlength="100">
                     </div>
                     <div class="input-group">
                         <label>Telefone (WhatsApp)</label>
-                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX">
+                        <input type="tel" class="member-phone" required placeholder="(XX) 9XXXX-XXXX" maxlength="20">
                     </div>
 
                     <button type="submit" class="btn-submit" style="margin-top: 30px;">Confirmar Inscrição da Equipe</button>
@@ -273,12 +261,10 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="script.js"></script>
     
-    <!-- Script do Carrossel -->
     <script>
         const track = document.querySelector('.carousel-track');
         const slides = Array.from(track.children);
@@ -289,7 +275,6 @@
 
         const slideWidth = slides[0].getBoundingClientRect().width;
 
-        // Posicionar slides um ao lado do outro
         const setSlidePosition = (slide, index) => {
             slide.style.left = slideWidth * index + 'px';
         };
@@ -306,14 +291,12 @@
             targetDot.classList.add('current-indicator');
         }
 
-        // Clique na direita
         nextButton.addEventListener('click', e => {
             const currentSlide = track.querySelector('.current-slide');
             let nextSlide = currentSlide.nextElementSibling;
             const currentDot = dotsNav.querySelector('.current-indicator');
             let nextDot = currentDot.nextElementSibling;
 
-            // Loop infinito (se chegar no fim, volta pro inicio)
             if (!nextSlide) {
                 nextSlide = slides[0];
                 nextDot = dots[0];
@@ -323,14 +306,12 @@
             updateDots(currentDot, nextDot);
         });
 
-        // Clique na esquerda
         prevButton.addEventListener('click', e => {
             const currentSlide = track.querySelector('.current-slide');
             let prevSlide = currentSlide.previousElementSibling;
             const currentDot = dotsNav.querySelector('.current-indicator');
             let prevDot = currentDot.previousElementSibling;
 
-            // Loop infinito reverso
             if (!prevSlide) {
                 prevSlide = slides[slides.length - 1];
                 prevDot = dots[dots.length - 1];
@@ -340,7 +321,6 @@
             updateDots(currentDot, prevDot);
         });
 
-        // Clique nos indicadores (bolinhas)
         dotsNav.addEventListener('click', e => {
             const targetDot = e.target.closest('button');
             if (!targetDot) return;
@@ -354,7 +334,6 @@
             updateDots(currentDot, targetDot);
         });
 
-        // Ajuste responsivo ao redimensionar a janela
         window.addEventListener('resize', () => {
             const newSlideWidth = slides[0].getBoundingClientRect().width;
             slides.forEach((slide, index) => {

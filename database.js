@@ -6,7 +6,7 @@ const { Pool } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-    console.warn('⚠️  ATENÇÃO: DATABASE_URL não definida. O banco de dados pode não conectar em produção.');
+    console.error('❌ ERRO: DATABASE_URL não definida. Crie o arquivo .env (local) ou configure na Vercel.');
 }
 
 const pool = new Pool({
@@ -15,7 +15,9 @@ const pool = new Pool({
 });
 
 if (process.env.DATABASE_URL) {
-    console.log('🔌 Conectado ao banco de dados na nuvem (Neon Tech).');
+    // Mascara a senha para não vazar no log, mas mostra que tentou conectar
+    const maskedUrl = process.env.DATABASE_URL.replace(/:([^:@]+)@/, ':****@');
+    console.log(`🔌 Tentando conectar ao Neon: ${maskedUrl}`);
 } else {
     console.log('💻 Conectado ao banco de dados local.');
 }
