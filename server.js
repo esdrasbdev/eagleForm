@@ -60,10 +60,6 @@ app.get(['/admin.html', '/Admin.html', '/admin'], (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// Servir arquivos estáticos da pasta 'public' (index.html, style.css, imagens)
-// Agora está DEPOIS da rota de admin, então o admin protegido tem prioridade
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Rota para salvar inscrição
 app.post('/api/register', async (req, res) => {
     const { teamName, members } = req.body;
@@ -211,6 +207,10 @@ app.get('/api/email-check', async (req, res) => {
         res.status(500).json({ status: 'error', error: error.message, hint: 'Verifique se a Senha de App está correta.' });
     }
 });
+
+// Servir arquivos estáticos da pasta 'public' (index.html, style.css, imagens)
+// Colocado no final para garantir que todas as rotas de API acima tenham prioridade
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Iniciar servidor
 if (require.main === module) {
