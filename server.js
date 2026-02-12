@@ -34,8 +34,13 @@ app.use(limiter);
 
 // Middleware de Autenticação Básica
 const authMiddleware = (req, res, next) => {
-    // Verifica se a rota é protegida
-    if (req.path === '/admin.html' || req.path === '/api/participants') {
+    const requestPath = req.path.toLowerCase();
+
+    // Verifica se a rota é protegida (inclui /admin e ignora maiúsculas/minúsculas)
+    if (requestPath === '/admin.html' || requestPath === '/admin' || requestPath === '/api/participants') {
+        // Força o navegador a não fazer cache da página de admin
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
         const auth = { 
              login: process.env.ADMIN_USER, 
             password: process.env.ADMIN_PASS 
