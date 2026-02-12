@@ -132,15 +132,19 @@ app.post('/api/register', async (req, res) => {
                 }
             });
 
-            // Formata a lista de membros para o e-mail
+            // Formata a lista de membros para o e-mail (Layout em Cards para não cortar no celular)
             const membersListHtml = members.map((m, i) => 
-                `<tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>${i === 0 ? 'Líder' : `Integrante ${i+1}`}</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${m.name}</td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${m.matricula}</td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${m.email}</td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${m.phone || 'N/A'}</td>
-                 </tr>`
+                `<div style="background-color: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid ${i === 0 ? '#007bff' : '#6c757d'};">
+                    <p style="margin: 0 0 5px 0; color: ${i === 0 ? '#007bff' : '#555'}; font-weight: bold; text-transform: uppercase; font-size: 12px;">
+                        ${i === 0 ? '👑 Líder da Equipe' : `👤 Integrante ${i+1}`}
+                    </p>
+                    <p style="margin: 0 0 5px 0; font-size: 16px; font-weight: bold; color: #333;">${m.name}</p>
+                    <p style="margin: 0; font-size: 14px; color: #555; line-height: 1.5;">
+                        📧 <a href="mailto:${m.email}" style="color: #007bff; text-decoration: none;">${m.email}</a><br>
+                        🆔 Matrícula: <strong>${m.matricula}</strong><br>
+                        📱 Telefone: <strong>${m.phone || 'N/A'}</strong>
+                    </p>
+                 </div>`
             ).join('');
 
             const mailOptions = {
@@ -148,22 +152,19 @@ app.post('/api/register', async (req, res) => {
                 to: process.env.EMAIL_TO || process.env.EMAIL_USER, // Envia para o email configurado ou para si mesmo
                 subject: `🦅 Nova Inscrição: Time ${teamName}`,
                 html: `
-                    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
-                        <h2 style="color: #0a192f; text-align: center;">🦅 Nova Inscrição no Eagle Event!</h2>
-                        <p>A equipe <strong>${teamName}</strong> acaba de se inscrever.</p>
-                        <hr style="border: 0; border-top: 1px solid #eee;">
-                        <h3 style="color: #0a192f;">Detalhes dos Integrantes:</h3>
-                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                            <tr style="background-color: #f2f2f2;">
-                                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Posição</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Nome</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Matrícula</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Email</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #007bff;">Telefone</th>
-                            </tr>
+                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h1 style="color: #0a192f; margin: 0;">🦅 Nova Inscrição</h1>
+                            <p style="font-size: 18px; color: #666;">Equipe: <strong style="color: #007bff;">${teamName}</strong></p>
+                        </div>
+                        
+                        <div style="background-color: #fff; border-radius: 8px;">
                             ${membersListHtml}
-                        </table>
-                        <p style="margin-top: 20px; text-align: center; font-size: 0.9em; color: #777;">Verifique o painel administrativo para mais detalhes.</p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
+                            <p>Este é um e-mail automático do sistema Eagle Event.</p>
+                        </div>
                     </div>
                 `
             };
