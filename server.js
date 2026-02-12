@@ -40,15 +40,28 @@ app.use(bodyParser.json());
 
 // Middleware de Autenticação - agora mais simples, aplicado apenas onde necessário
 const authMiddleware = (req, res, next) => {
-    const auth = { login: process.env.ADMIN_USER, password: process.env.ADMIN_PASS };
-    const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+    // Remove espaços em branco acidentais das variáveis de ambiente e garante que sejam strings
+    const envUser = (process.env.ADMIN_USER || '').trim();
+    const envPass = (process.env.ADMIN_PASS || '').trim();
 
-    if (login && password && login === auth.login && password === auth.password) {
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+    const decoded = Buffer.from(b64auth, 'base64').toString();
+    
+    // Separa login e senha corretamente (mesmo se a senha tiver ':')
+    const separatorIndex = decoded.indexOf(':');
+    const login = separatorIndex > -1 ? decoded.substring(0, separatorIndex) : '';
+    const password = separatorIndex > -1 ? decoded.substring(separatorIndex + 1) : '';
+
+    if (login && password && login === envUser && password === envPass) {
         // Previne o cache da página de admin mesmo após o login
         res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
         return next();
     }
+
+    // Logs detalhados para debug na Vercel (mostra o tamanho para não vazar a senha real)
+    console.warn(`⚠️ Falha de autenticação.`);
+    console.warn(`   Recebido: User="${login}", TamanhoSenha=${password.length}`);
+    console.warn(`   Esperado: User="${envUser}", TamanhoSenha=${envPass.length}`);
 
     res.set('WWW-Authenticate', 'Basic realm="401"');
     return res.status(401).send('Autenticação necessária para acessar esta área.');
