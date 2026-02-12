@@ -6,6 +6,8 @@
     <title>Admin | Eagle Event</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Previne erro 404 de favicon -->
+    <link rel="icon" href="data:,">
     <style>
         /* Estilos específicos para a tabela do admin */
         .admin-container { padding-top: 100px; min-height: 80vh; }
@@ -30,8 +32,12 @@
             <table id="participantsTable">
                 <thead>
                     <tr>
-                        <th>Time</th>
-                        <th>Integrantes</th>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Matrícula</th>
+                        <th>Turma</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
                         <th>Data Inscrição</th>
                     </tr>
                 </thead>
@@ -50,26 +56,21 @@
                 const result = await response.json();
                 const tbody = document.querySelector('#participantsTable tbody');
 
-                if (!result.data || result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Nenhuma equipe inscrita ainda.</td></tr>';
+                if(result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Nenhum inscrito ainda.</td></tr>';
                     return;
                 }
 
-                result.data.forEach(team => {
-                    const members = team.members; 
-
-                    let membersHtml = '<ul style="list-style: none; padding: 0; margin: 0;">';
-                    members.forEach((m, index) => {
-                        const role = index === 0 ? '<span style="color: #64ffda; font-weight: bold;">(Líder)</span>' : '';
-                        membersHtml += `<li style="margin-bottom: 5px;">• <strong>${m.name}</strong> ${role}<br><small style="opacity: 0.7;">Mat: ${m.matricula} | ${m.email} | Tel: ${m.phone || 'N/A'}</small></li>`;
-                    });
-                    membersHtml += '</ul>';
-
+                result.data.forEach(user => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td style="font-weight:bold; color:#64ffda; vertical-align: top;">${team.team_name}</td>
-                        <td>${membersHtml}</td>
-                        <td style="vertical-align: top;">${new Date(team.created_at).toLocaleDateString('pt-BR')}</td>
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.matricula || '-'}</td>
+                        <td>${user.turma || '-'}</td>
+                        <td>${user.phone || '-'}</td>
+                        <td>${user.email}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('pt-BR')}</td>
                     `;
                     tbody.appendChild(tr);
                 });

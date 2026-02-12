@@ -23,6 +23,10 @@ app.set('trust proxy', 1);
 app.use(helmet()); // Adiciona headers de segurança HTTP
 app.use(cors());   // Configura CORS (Cross-Origin Resource Sharing)
 
+// Servir arquivos estáticos da pasta 'public' (index.html, style.css, imagens)
+// MUDANÇA: Movido para o topo para evitar bloqueios e erro 401 em imagens
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Rate Limiting: Limita requisições para evitar abuso/DDoS
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
@@ -124,8 +128,10 @@ app.get(['/admin.html', '/Admin.html', '/admin'], authMiddleware, (req, res) => 
     res.sendFile(path.join(__dirname, 'public', 'Admin.html'));
 });
 
-// Servir arquivos estáticos da pasta 'public' (index.html, style.css, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
+// Rota padrão para servir o index.html em qualquer outra rota não capturada (SPA fallback)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Iniciar servidor
 if (require.main === module) {
