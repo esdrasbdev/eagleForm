@@ -6,6 +6,7 @@ const db = require('./database');
 const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = 3000;
@@ -32,72 +33,98 @@ const limiter = rateLimit({
 // Aplica o limitador em todas as rotas
 app.use(limiter);
 
-// Middleware de Autenticação Básica
-const authMiddleware = (req, res, next) => {
-    const requestPath = req.path.toLowerCase();
-
-    // Verifica se a rota é protegida (inclui /admin e ignora maiúsculas/minúsculas)
-    if (requestPath === '/admin.html' || requestPath === '/admin' || requestPath === '/api/participants') {
-        // Força o navegador a não fazer cache da página de admin
-        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-
-        const auth = { 
-             login: process.env.ADMIN_USER, 
-            password: process.env.ADMIN_PASS 
-        }; 
-        const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-        const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
-
-        if (login && password && login === auth.login && password === auth.password) {
-            return next();
-        }
-
-        res.set('WWW-Authenticate', 'Basic realm="401"');
-        return res.status(401).send('Autenticação necessária para acessar esta área.');
-    }
-    next();
-};
-
 // Middlewares
 app.use(bodyParser.json());
-app.use(authMiddleware); // Aplica a proteção antes de servir os arquivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware de Autenticação - agora mais simples, aplicado apenas onde necessário
+const authMiddleware = (req, res, next) => {
+    const auth = { login: process.env.ADMIN_USER, password: process.env.ADMIN_PASS };
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+    if (login && password && login === auth.login && password === auth.password) {
+        // Previne o cache da página de admin mesmo após o login
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+        return next();
+    }
+
+    res.set('WWW-Authenticate', 'Basic realm="401"');
+    return res.status(401).send('Autenticação necessária para acessar esta área.');
+};
 
 // Rota para salvar inscrição
 app.post('/api/register', async (req, res) => {
-    const { name, matricula, turma, phone, email } = req.body;
+    const { teamName, members } = req.body;
 
-    if (!name || !email) {
-        return res.status(400).json({ error: 'Nome e E-mail são obrigatórios.' });
+    if (!teamName || !members || members.length !== 5) {
+        return res.status(400).json({ error: 'É necessário um nome de time e exatamente 5 integrantes.' });
     }
 
-    // Sintaxe PostgreSQL: usa $1, $2... e RETURNING id para obter o ID gerado
-    const sql = `INSERT INTO participants (name, matricula, turma, phone, email) VALUES ($1, $2, $3, $4, $5) RETURNING id`;
-    const params = [name, matricula, turma, phone, email];
+    // Salva o array de membros como JSON no banco
+    const sql = `INSERT INTO teams (team_name, members) VALUES ($1, $2) RETURNING id`;
+    const params = [teamName, JSON.stringify(members)];
 
     try {
         const result = await db.query(sql, params);
-        res.json({ message: 'Inscrição realizada com sucesso!', id: result.rows[0].id });
-    } catch (err) {
-        // Código de erro 23505 é violação de unicidade no Postgres
-        if (err.code === '23505') {
-            return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
+        
+        // --- Lógica de Envio de E-mail ---
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail', // Ou outro serviço SMTP
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS
+                }
+            });
+
+            // Formata a lista de membros para o e-mail
+            const membersListHtml = members.map((m, i) => 
+                `<li><strong>Integrante ${i+1}:</strong> ${m.name} (Mat: ${m.matricula}) - ${m.email} - Tel: ${m.phone || 'N/A'}</li>`
+            ).join('');
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_TO || process.env.EMAIL_USER, // Envia para o email configurado ou para si mesmo
+                subject: `🦅 Nova Inscrição: Time ${teamName}`,
+                html: `
+                    <h2>Nova equipe inscrita no Eagle Event!</h2>
+                    <p><strong>Nome da Equipe:</strong> ${teamName}</p>
+                    <h3>Integrantes:</h3>
+                    <ul>${membersListHtml}</ul>
+                    <p>Verifique o painel administrativo para mais detalhes.</p>
+                `
+            };
+
+            // Envia o e-mail sem travar a resposta da API se falhar
+            transporter.sendMail(mailOptions).catch(err => console.error("Erro ao enviar email:", err));
         }
+
+        res.json({ message: 'Time inscrito com sucesso!', id: result.rows[0].id });
+    } catch (err) {
         console.error(err); // Loga o erro no servidor, mas não envia para o cliente
-        return res.status(500).json({ error: 'Erro interno ao processar inscrição.' });
+        return res.status(500).json({ error: 'Erro interno ao processar inscrição do time.' });
     }
 });
 
 // Rota para listar participantes (Área Admin)
-app.get('/api/participants', async (req, res) => {
+app.get('/api/participants', authMiddleware, async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM participants ORDER BY created_at DESC");
+        const result = await db.query("SELECT * FROM teams ORDER BY created_at DESC");
         res.json({ data: result.rows });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Erro ao buscar participantes.' });
+        return res.status(500).json({ error: 'Erro ao buscar times.' });
     }
 });
+
+// Rota protegida para a página de admin.
+// IMPORTANTE: Esta rota intercepta a chamada para /admin.html ANTES do express.static.
+app.get('/admin.html', authMiddleware, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Servir arquivos estáticos da pasta 'public' (index.html, style.css, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Iniciar servidor
 if (require.main === module) {

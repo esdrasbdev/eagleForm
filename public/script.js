@@ -6,12 +6,28 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
     const submitBtn = document.querySelector('.btn-submit');
     const messageEl = document.getElementById('formMessage');
     
+    // Coleta dados do time
+    const teamName = document.getElementById('teamName').value;
+    
+    // Coleta dados dos membros (seleciona todos os inputs por classe)
+    const names = document.querySelectorAll('.member-name');
+    const matriculas = document.querySelectorAll('.member-matricula');
+    const emails = document.querySelectorAll('.member-email');
+    const phones = document.querySelectorAll('.member-phone'); // Apenas o líder tem telefone obrigatório no HTML, mas pegamos todos se houver
+
+    const members = [];
+    for(let i = 0; i < 5; i++) {
+        members.push({
+            name: names[i].value,
+            matricula: matriculas[i].value,
+            email: emails[i].value,
+            phone: phones[i] ? phones[i].value : '' // Pega telefone se existir input para aquele indice
+        });
+    }
+
     const formData = {
-        name: document.getElementById('name').value,
-        matricula: document.getElementById('matricula').value,
-        turma: document.getElementById('turma').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('email').value
+        teamName: teamName,
+        members: members
     };
 
     submitBtn.textContent = 'Enviando...';
@@ -56,7 +72,7 @@ document.getElementById('registrationForm').addEventListener('submit', async fun
         messageEl.textContent = 'Erro ao conectar com o servidor.';
         messageEl.classList.add('error');
     } finally {
-        submitBtn.textContent = 'Confirmar Inscrição';
+        submitBtn.textContent = 'Confirmar Inscrição da Equipe';
         submitBtn.disabled = false;
     }
 });

@@ -23,16 +23,13 @@ if (process.env.DATABASE_URL) {
 
 const initDb = async () => {
     try {
-        await pool.query(`CREATE TABLE IF NOT EXISTS participants (
+        await pool.query(`CREATE TABLE IF NOT EXISTS teams (
             id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            matricula TEXT,
-            turma TEXT,
-            phone TEXT,
-            email TEXT NOT NULL UNIQUE,
+            team_name TEXT NOT NULL,
+            members JSONB NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`);
-        console.log('Banco de dados PostgreSQL conectado e tabela verificada.');
+        console.log('Banco de dados PostgreSQL conectado e tabela TEAMS verificada.');
     } catch (err) {
         console.error('Erro ao conectar ao banco de dados:', err);
     }
