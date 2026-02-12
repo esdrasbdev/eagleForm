@@ -119,8 +119,9 @@ app.get('/api/participants', authMiddleware, async (req, res) => {
 
 // Rota protegida para a página de admin.
 // IMPORTANTE: Esta rota intercepta a chamada para /admin.html ANTES do express.static.
-app.get('/admin.html', authMiddleware, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+// Adicionamos variações de caminho para garantir que a proteção funcione em diferentes sistemas
+app.get(['/admin.html', '/Admin.html', '/admin'], authMiddleware, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Admin.html'));
 });
 
 // Servir arquivos estáticos da pasta 'public' (index.html, style.css, etc.)
