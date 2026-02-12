@@ -1,7 +1,13 @@
 const { Pool } = require('pg');
 
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:senha@localhost:5432/eagle_event';
+// Em produção, NUNCA use credenciais hardcoded.
+// Se a variável de ambiente não existir, usamos uma string vazia para forçar o erro ou configuração manual segura.
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    console.warn('⚠️  ATENÇÃO: DATABASE_URL não definida. O banco de dados pode não conectar em produção.');
+}
 
 const pool = new Pool({
     connectionString,

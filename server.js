@@ -3,9 +3,34 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const db = require('./database');
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = 3000;
+
+// Verifica se as variáveis de admin estão definidas
+if (!process.env.ADMIN_USER || !process.env.ADMIN_PASS) {
+    console.warn('⚠️  ATENÇÃO: ADMIN_USER ou ADMIN_PASS não definidos. A área administrativa pode estar vulnerável.');
+}
+
+// Necessário para Vercel/Heroku/Proxies para que o rate limit funcione corretamente
+app.set('trust proxy', 1);
+
+// Configurações de Segurança
+app.use(helmet()); // Adiciona headers de segurança HTTP
+app.use(cors());   // Configura CORS (Cross-Origin Resource Sharing)
+
+// Rate Limiting: Limita requisições para evitar abuso/DDoS
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100, // Limite de 100 requisições por IP
+    message: 'Muitas requisições criadas a partir deste IP, por favor tente novamente mais tarde.'
+});
+
+// Aplica o limitador em todas as rotas
+app.use(limiter);
 
 // Middleware de Autenticação Básica
 const authMiddleware = (req, res, next) => {
@@ -53,7 +78,8 @@ app.post('/api/register', async (req, res) => {
         if (err.code === '23505') {
             return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
         }
-        return res.status(500).json({ error: err.message });
+        console.error(err); // Loga o erro no servidor, mas não envia para o cliente
+        return res.status(500).json({ error: 'Erro interno ao processar inscrição.' });
     }
 });
 
@@ -63,7 +89,8 @@ app.get('/api/participants', async (req, res) => {
         const result = await db.query("SELECT * FROM participants ORDER BY created_at DESC");
         res.json({ data: result.rows });
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        console.error(err);
+        return res.status(500).json({ error: 'Erro ao buscar participantes.' });
     }
 });
 
