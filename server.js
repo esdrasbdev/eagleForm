@@ -193,6 +193,24 @@ app.get('/api/participants', authMiddleware, async (req, res) => {
     }
 });
 
+// Rota utilitária para resetar a contagem de IDs (Use após apagar inscrições)
+app.get('/api/reset-sequence', authMiddleware, async (req, res) => {
+    try {
+        // Ajusta a sequência para o maior ID existente ou reinicia em 1 se vazio
+        await db.query(`
+            SELECT setval(
+                pg_get_serial_sequence('teams', 'id'),
+                COALESCE((SELECT MAX(id) FROM teams), 0) + 1,
+                false
+            )
+        `);
+        res.json({ message: 'Contagem de IDs ajustada com sucesso! O próximo time será o número correto.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao ajustar sequência.' });
+    }
+});
+
 // Rota de Diagnóstico: Testar conexão com o Banco
 app.get('/api/db-check', async (req, res) => {
     try {
