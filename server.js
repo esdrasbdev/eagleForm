@@ -194,7 +194,7 @@ app.post('/api/register', async (req, res) => {
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: adminEmail, // Envia para o admin
-                cc: participantsEmails.length > 0 ? participantsEmails.join(',') : undefined, // Cópia para todos os participantes
+                cc: participantsEmails.length > 0 ? participantsEmails : undefined, // Cópia para todos os participantes (usando array)
                 subject: `🦅 Nova Inscrição: Time ${sanitizedTeamName}`,
                 html: `
                     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
