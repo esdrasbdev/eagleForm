@@ -20,6 +20,7 @@ body {
     background-color: var(--dark-bg);
     color: var(--text-main);
     line-height: 1.6;
+    overflow-x: hidden; /* Evita que o menu escondido cause rolagem lateral no celular */
 }
 
 /* Barra de Rolagem Personalizada */
@@ -144,10 +145,11 @@ h1, h2, h3, .logo {
 
 .bar {
     display: block;
-    width: 25px;
-    height: 3px;
-    margin: 5px auto;
+    width: 6px;
+    height: 6px;
+    margin: 4px auto;
     background-color: var(--text-main);
+    border-radius: 50%; /* Transforma as barras em 3 pontos */
     transition: all 0.3s ease;
 }
 
@@ -381,7 +383,7 @@ h1, h2, h3, .logo {
 .carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Preenche o espaço, dando sensação de foto maior */
+    object-fit: contain; /* Garante que a imagem não fique esticada, mantendo a proporção */
     border-radius: 8px;
     /* Filtro sutil para integrar a imagem ao tema escuro */
     filter: brightness(0.8);
@@ -461,10 +463,13 @@ h1, h2, h3, .logo {
 }
 
 @media (max-width: 768px) {
-    .carousel-wrapper { height: 280px; } /* Ajuste para mobile */
-    .carousel-slide { width: 85%; } /* Cards menores no celular */
+    .carousel-wrapper { height: 400px; } /* Aumenta a altura para imagens maiores */
+    .carousel-slide { width: 85vw; } /* Usa a largura da viewport para um cálculo mais estável da animação */
     .btn-prev { left: 10px; }
     .btn-next { right: 10px; }
+    .carousel-track {
+        animation-duration: 40s; /* Acelera a rolagem no celular (mais rápido que os 40s do desktop) */
+    }
 }
 
 /* Steps */
@@ -676,6 +681,14 @@ footer {
         z-index: 1001;
     }
 
+    /* Transforma os pontos em linhas (X) quando o menu abre */
+    .menu-toggle.active .bar {
+        width: 25px;
+        height: 3px;
+        border-radius: 0;
+        margin: 5px auto;
+    }
+
     /* Animação do ícone de menu */
     .menu-toggle.active .bar:nth-child(2) {
         opacity: 0;
@@ -696,6 +709,12 @@ footer {
     
     .section-title { font-size: 2rem; }
     .about-description-box { padding: 1.5rem; font-size: 1rem; }
+
+    /* Remove o efeito de fade nas laterais do carrossel no mobile para garantir que as imagens apareçam */
+    .carousel-track-container {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
 }
 
 /* Fallback: Se o JavaScript falhar ou for bloqueado, mostra o conteúdo forçadamente */

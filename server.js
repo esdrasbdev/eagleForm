@@ -158,7 +158,7 @@ app.post('/api/register', async (req, res) => {
         
         // --- Lógica de Envio de E-mail ---
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            console.log(`📧 Tentando enviar e-mail de notificação para ${process.env.EMAIL_TO || process.env.EMAIL_USER}...`);
+            console.log(`📧 Tentando enviar e-mail de notificação para: ${process.env.EMAIL_TO || process.env.EMAIL_USER} (Remetente: ${process.env.EMAIL_USER})...`);
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail', // Ou outro serviço SMTP
@@ -208,7 +208,7 @@ app.post('/api/register', async (req, res) => {
 
             // Envia o e-mail sem travar a resposta da API se falhar
             transporter.sendMail(mailOptions)
-                .then(info => console.log(`📧 E-mail de notificação enviado: ${info.response}`))
+                .then(info => console.log(`✅ E-mail de notificação enviado com sucesso: ${info.response}`))
                 .catch(err => console.error("❌ Erro ao enviar email:", err));
         }
 
