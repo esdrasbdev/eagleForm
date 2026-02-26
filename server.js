@@ -184,9 +184,17 @@ app.post('/api/register', async (req, res) => {
                  </div>`
             ).join('');
 
+            // Coleta todos os emails dos participantes para enviar cópia
+            const participantsEmails = sanitizedMembers.map(m => m.email).filter(email => email);
+            
+            // Email do admin (destinatário principal)
+            const adminEmail = process.env.EMAIL_TO || process.env.EMAIL_USER;
+            
+            // Se houver participantsEmails, adiciona como CC
             const mailOptions = {
                 from: process.env.EMAIL_USER,
-                to: process.env.EMAIL_TO || process.env.EMAIL_USER, // Envia para o email configurado ou para si mesmo
+                to: adminEmail, // Envia para o admin
+                cc: participantsEmails.length > 0 ? participantsEmails.join(',') : undefined, // Cópia para todos os participantes
                 subject: `🦅 Nova Inscrição: Time ${sanitizedTeamName}`,
                 html: `
                     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
