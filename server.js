@@ -77,30 +77,52 @@ app.get(['/admin.html', '/Admin.html', '/admin'], (req, res) => {
 app.post('/api/register', async (req, res) => {
     const { teamName, members } = req.body;
 
-    if (!teamName || !members || members.length !== 5) {
-        return res.status(400).json({ error: 'É necessário um nome de time e exatamente 5 integrantes.' });
+    // 1. Validação da estrutura básica dos dados
+    if (!teamName || !members || !Array.isArray(members)) {
+        return res.status(400).json({ error: 'Dados de formulário inválidos ou ausentes.' });
     }
 
-    // 1. Validação de Limites de Caracteres (Backend)
-    if (teamName.length > 100) return res.status(400).json({ error: 'Nome do time muito longo (máx 100 caracteres).' });
+    // 2. Limpa (sanitiza) todos os dados e filtra integrantes vazios
+    const sanitizedTeamName = String(teamName || '').trim();
+    const sanitizedMembers = members
+        .map(member => ({
+            name: String(member.name || '').trim(),
+            matricula: String(member.matricula || '').trim(),
+            semestre: String(member.semestre || '').trim(),
+            email: String(member.email || '').trim(),
+            phone: String(member.phone || '').trim(),
+        }))
+        .filter(member => member.name); // Mantém apenas integrantes que têm um nome preenchido
 
-    for (const member of members) {
-        if (!member.name || member.name.length > 100) return res.status(400).json({ error: `Nome inválido para ${member.name || 'um integrante'} (máx 100 caracteres).` });
-        if (!member.matricula || member.matricula.length > 20) return res.status(400).json({ error: `Matrícula inválida para ${member.name} (máx 20 caracteres).` });
-        if (!member.email || member.email.length > 100) return res.status(400).json({ error: `Email inválido para ${member.name} (máx 100 caracteres).` });
-        if (member.phone && member.phone.length > 20) return res.status(400).json({ error: `Telefone inválido para ${member.name} (máx 20 caracteres).` });
+    // 3. Valida os dados já limpos
+    if (!sanitizedTeamName || sanitizedMembers.length < 1) {
+        return res.status(400).json({ error: 'É necessário um nome de time e pelo menos 1 integrante.' });
+    }
+    if (sanitizedMembers.length > 5) {
+        return res.status(400).json({ error: 'O time não pode ter mais de 5 integrantes.' });
     }
 
-    // 2. Validação de Duplicidade no Banco de Dados
+    if (sanitizedTeamName.length > 100) return res.status(400).json({ error: 'Nome do time muito longo (máx 100 caracteres).' });
+
+    for (const member of sanitizedMembers) {
+        if (member.name.length > 100) return res.status(400).json({ error: `Nome inválido para ${member.name} (máx 100 caracteres).` });
+        if (member.matricula.length > 50) return res.status(400).json({ error: `Matrícula inválida para ${member.name} (máx 50 caracteres).` });
+        if (!member.semestre || member.semestre.length > 50) return res.status(400).json({ error: `O campo Turma/Semestre é obrigatório e deve ter no máximo 50 caracteres para ${member.name}.` });
+        if (!member.email || member.email.length > 100) return res.status(400).json({ error: `O campo E-mail é obrigatório e deve ter no máximo 100 caracteres para ${member.name}.` });
+        if (!member.phone || member.phone.length > 30) return res.status(400).json({ error: `O campo Telefone é obrigatório e deve ter no máximo 30 caracteres para ${member.name}.` });
+    }
+
+    // 4. Validação de Duplicidade no Banco de Dados
     // Verifica se algum email ou matrícula já existe dentro do JSON de qualquer time
-    const emails = members.map(m => m.email);
-    const matriculas = members.map(m => m.matricula);
+    const emails = sanitizedMembers.map(m => m.email);
+    // Filtra matrículas vazias para não dar falso positivo na verificação de duplicidade
+    const matriculas = sanitizedMembers.map(m => m.matricula).filter(m => m !== '');
 
     const duplicateCheckSql = `
         SELECT member->>'name' as name, member->>'email' as email, member->>'matricula' as matricula
         FROM teams, jsonb_array_elements(members) as member
         WHERE member->>'email' = ANY($1)
-           OR member->>'matricula' = ANY($2)
+           OR (member->>'matricula' != '' AND member->>'matricula' = ANY($2))
         LIMIT 1;
     `;
 
@@ -108,7 +130,19 @@ app.post('/api/register', async (req, res) => {
         const dupResult = await db.query(duplicateCheckSql, [emails, matriculas]);
         if (dupResult.rows.length > 0) {
             const dup = dupResult.rows[0];
-            return res.status(400).json({ error: `O participante ${dup.name} já está inscrito (Email: ${dup.email} ou Matrícula: ${dup.matricula}).` });
+            
+            // Mensagem de erro mais clara para evitar confusão com campos vazios
+            let errorMsg = `O participante ${dup.name} já está inscrito.`;
+            
+            if (emails.includes(dup.email)) {
+                errorMsg += ` O e-mail ${dup.email} já foi utilizado.`;
+            } else if (matriculas.includes(dup.matricula)) {
+                errorMsg += ` A matrícula ${dup.matricula} já foi utilizada.`;
+            } else {
+                errorMsg += ` Verifique se o e-mail ou matrícula já foram cadastrados.`;
+            }
+            
+            return res.status(400).json({ error: errorMsg });
         }
     } catch (err) {
         console.error('Erro ao verificar duplicidade:', err);
@@ -116,14 +150,16 @@ app.post('/api/register', async (req, res) => {
     }
 
     // Salva o array de membros como JSON no banco
-    const sql = `INSERT INTO teams (team_name, members) VALUES ($1, $2) RETURNING id`;
-    const params = [teamName, JSON.stringify(members)];
+    const sql = `INSERT INTO teams (team_name, members) VALUES ($1, $2) RETURNING id;`;
+    const params = [sanitizedTeamName, JSON.stringify(sanitizedMembers)];
 
     try {
         const result = await db.query(sql, params);
         
         // --- Lógica de Envio de E-mail ---
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            console.log(`📧 Tentando enviar e-mail de notificação para ${process.env.EMAIL_TO || process.env.EMAIL_USER}...`);
+
             const transporter = nodemailer.createTransport({
                 service: 'gmail', // Ou outro serviço SMTP
                 auth: {
@@ -133,7 +169,7 @@ app.post('/api/register', async (req, res) => {
             });
 
             // Formata a lista de membros para o e-mail (Layout em Cards para não cortar no celular)
-            const membersListHtml = members.map((m, i) => 
+            const membersListHtml = sanitizedMembers.map((m, i) => 
                 `<div style="background-color: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid ${i === 0 ? '#007bff' : '#6c757d'};">
                     <p style="margin: 0 0 5px 0; color: ${i === 0 ? '#007bff' : '#555'}; font-weight: bold; text-transform: uppercase; font-size: 12px;">
                         ${i === 0 ? '👑 Líder da Equipe' : `👤 Integrante ${i+1}`}
@@ -142,6 +178,7 @@ app.post('/api/register', async (req, res) => {
                     <p style="margin: 0; font-size: 14px; color: #555; line-height: 1.5;">
                         📧 <a href="mailto:${m.email}" style="color: #007bff; text-decoration: none;">${m.email}</a><br>
                         🆔 Matrícula: <strong>${m.matricula}</strong><br>
+                        📚 Turma/Semestre: <strong>${m.semestre}</strong><br>
                         📱 Telefone: <strong>${m.phone || 'N/A'}</strong>
                     </p>
                  </div>`
@@ -150,12 +187,12 @@ app.post('/api/register', async (req, res) => {
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: process.env.EMAIL_TO || process.env.EMAIL_USER, // Envia para o email configurado ou para si mesmo
-                subject: `🦅 Nova Inscrição: Time ${teamName}`,
+                subject: `🦅 Nova Inscrição: Time ${sanitizedTeamName}`,
                 html: `
                     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="text-align: center; margin-bottom: 30px;">
                             <h1 style="color: #0a192f; margin: 0;">🦅 Nova Inscrição</h1>
-                            <p style="font-size: 18px; color: #666;">Equipe: <strong style="color: #007bff;">${teamName}</strong></p>
+                            <p style="font-size: 18px; color: #666;">Equipe: <strong style="color: #007bff;">${sanitizedTeamName}</strong></p>
                         </div>
                         
                         <div style="background-color: #fff; border-radius: 8px;">

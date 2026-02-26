@@ -11,7 +11,8 @@ if (!connectionString) {
 
 const pool = new Pool({
     connectionString,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false 
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+    connectionTimeoutMillis: 10000 // Espera 10 segundos antes de dar erro de timeout
 });
 
 if (process.env.DATABASE_URL) {
@@ -37,6 +38,8 @@ const initDb = async () => {
     }
 };
 
-initDb();
+// A verificação da tabela em cada inicialização pode causar timeouts na Vercel.
+// É melhor garantir que a tabela exista executando o SQL manualmente uma vez.
+// initDb();
 
 module.exports = pool;

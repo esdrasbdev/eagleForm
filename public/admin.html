@@ -146,7 +146,7 @@
                     let membersHtml = '<ul>';
                     members.forEach((m, index) => {
                         const role = index === 0 ? '<span style="color: #64ffda; font-weight: bold;">(Líder)</span>' : '';
-                        membersHtml += `<li>• <strong>${m.name}</strong> ${role}<br><small style="opacity: 0.7;">Mat: ${m.matricula} | ${m.email} | Tel: ${m.phone || 'N/A'}</small></li>`;
+                        membersHtml += `<li>• <strong>${m.name}</strong> ${role}<br><small style="opacity: 0.7;">Mat: ${m.matricula} | Semestre: ${m.semestre} | ${m.email} | Tel: ${m.phone || 'N/A'}</small></li>`;
                     });
                     membersHtml += '</ul>';
 

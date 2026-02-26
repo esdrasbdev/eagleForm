@@ -22,6 +22,25 @@ body {
     line-height: 1.6;
 }
 
+/* Barra de Rolagem Personalizada */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #233554;
+    border-radius: 5px;
+    border: 2px solid var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-blue);
+}
+
 h1, h2, h3, .logo {
     font-family: 'Orbitron', sans-serif;
     color: var(--white);
@@ -42,7 +61,8 @@ h1, h2, h3, .logo {
     padding: 1rem 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(100, 255, 218, 0.1);
 }
 
 .nav-container {
@@ -61,6 +81,11 @@ h1, h2, h3, .logo {
     align-items: center;
 }
 
+.logo:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
 .logo img {
     height: 70px; /* Ajuste a altura conforme sua logo */
     width: auto;
@@ -77,10 +102,23 @@ h1, h2, h3, .logo {
     color: var(--text-main);
     font-weight: 500;
     transition: color 0.3s;
+    position: relative;
 }
 
 .nav-links a:hover {
     color: var(--neon-blue);
+}
+
+/* Animação de sublinhado na Navbar */
+.nav-links a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--neon-blue);
+    transition: width 0.3s;
+    position: absolute;
+    bottom: -5px;
 }
 
 .btn-nav {
@@ -88,6 +126,10 @@ h1, h2, h3, .logo {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     color: var(--neon-blue) !important;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
 }
 
 .btn-nav:hover {
@@ -131,8 +173,31 @@ h1, h2, h3, .logo {
     z-index: 0;
 }
 
+/* Partículas no Hero */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Abaixo do conteúdo, acima do overlay */
+}
+
 .hero-content {
     z-index: 1;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--neon-blue);
+    border-radius: 20px;
+    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    background: rgba(100, 255, 218, 0.1);
+    backdrop-filter: blur(5px);
 }
 
 .hero h1 {
@@ -140,8 +205,9 @@ h1, h2, h3, .logo {
     margin-bottom: 1rem;
     background: var(--gradient);
     -webkit-background-clip: text;
-    background-clip: text;
+    background-clip: text; /* Brilho mais intenso no título */
     -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); /* Brilho suave no título */
 }
 
 .hero p {
@@ -164,7 +230,7 @@ h1, h2, h3, .logo {
 
 .btn-cta:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0 30px rgba(0, 123, 255, 0.6);
+    box-shadow: 0 0 40px var(--neon-blue); /* Brilho mais intenso */
 }
 
 /* Sections */
@@ -194,11 +260,31 @@ h1, h2, h3, .logo {
     font-size: 1.1rem;
 }
 
+/* About Description Box */
+.about-description-box {
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+    text-align: center;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    background: rgba(10, 25, 47, 0.5);
+    padding: 2rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--neon-blue);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 10px 30px -10px rgba(2, 12, 27, 0.7);
+}
+
+.about-description-box p { margin-bottom: 20px; }
+.about-description-box p:last-child { margin-bottom: 0; }
+
 /* About Grid */
 .about-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
 }
 
 .about-card {
@@ -211,12 +297,15 @@ h1, h2, h3, .logo {
     overflow: hidden;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    /* Lógica 3 e 2 */
+    flex: 0 1 calc(33.333% - 30px);
+    min-width: 300px;
 }
 
 .about-card:hover {
     transform: translateY(-10px);
-    border-color: var(--neon-blue);
-    box-shadow: 0 15px 30px rgba(0, 123, 255, 0.15);
+    border-color: var(--neon-blue); /* Borda neon ao passar o mouse */
+    box-shadow: 0 10px 30px -10px var(--neon-blue); /* Glow neon ao passar o mouse */
 }
 
 .about-card .card-icon {
@@ -244,20 +333,20 @@ h1, h2, h3, .logo {
 /* Carousel Styles */
 .carousel-wrapper {
     position: relative;
-    height: 500px;
+    height: 450px; /* Altura reduzida para melhor proporção */
     width: 100%;
     margin: 0 auto;
     max-width: 900px;
 }
 
 .carousel-track-container {
-    background: #050f1e;
-    height: 100%;
+    height: 100%; /* Garante que o container ocupe a altura total */
     position: relative;
     overflow: hidden;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    border: 1px solid #233554;
+    /* Máscara de gradiente para suavizar as bordas (efeito fade nas laterais) */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .carousel-track {
@@ -266,26 +355,42 @@ h1, h2, h3, .logo {
     list-style: none;
     position: relative;
     height: 100%;
-    transition: transform 0.5s ease-in-out;
+    display: flex; /* Coloca os slides lado a lado */
+    width: max-content; /* Permite que a pista cresça o quanto for necessário */
+    animation: scroll 40s linear infinite; /* Velocidade reduzida */
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Move metade do caminho (já que duplicamos os slides) */
+        transform: translateX(-50%);
+    }
 }
 
 .carousel-slide {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
+    /* Define um tamanho fixo para os cards no scroll contínuo */
+    width: 650px; /* Largura aumentada para um visual mais panorâmico */
+    height: 100%;
+    flex-shrink: 0;
+    padding: 0 15px; /* Espaçamento entre as imagens */
 }
 
 .carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    opacity: 0.8;
-    transition: opacity 0.3s;
+    object-fit: cover; /* Preenche o espaço, dando sensação de foto maior */
+    border-radius: 8px;
+    /* Filtro sutil para integrar a imagem ao tema escuro */
+    filter: brightness(0.8);
+    transition: filter 0.4s, transform 0.4s ease-out;
 }
 
 .carousel-slide:hover img {
-    opacity: 1;
+    transform: scale(1.05);
+    filter: brightness(1);
 }
 
 .slide-caption {
@@ -318,6 +423,8 @@ h1, h2, h3, .logo {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Escondendo as setas conforme solicitado */
+    display: none; 
 }
 
 .carousel-btn:hover {
@@ -329,8 +436,9 @@ h1, h2, h3, .logo {
 .btn-prev { left: -25px; }
 .btn-next { right: -25px; }
 
+/* Esconde a navegação de bolinhas pois é um scroll infinito */
 .carousel-nav {
-    display: flex;
+    display: none;
     justify-content: center;
     padding: 10px 0;
     gap: 10px;
@@ -353,30 +461,99 @@ h1, h2, h3, .logo {
 }
 
 @media (max-width: 768px) {
-    .carousel-wrapper { height: 300px; }
+    .carousel-wrapper { height: 280px; } /* Ajuste para mobile */
+    .carousel-slide { width: 85%; } /* Cards menores no celular */
     .btn-prev { left: 10px; }
     .btn-next { right: 10px; }
 }
 
 /* Steps */
-.steps {
+.how-it-works-grid {
     display: flex;
-    justify-content: space-around;
     flex-wrap: wrap;
-    gap: 2rem;
+    justify-content: center; /* Centraliza os itens (garante que os 2 últimos fiquem no meio) */
+    gap: 30px;
+    margin-top: 2rem;
 }
 
-.step {
-    text-align: center;
-    flex: 1;
-    min-width: 200px;
+.how-it-works-card {
+    background: rgba(17, 34, 64, 0.6);
+    border: 1px solid rgba(100, 255, 218, 0.1);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    text-align: center; /* Centraliza texto e ícones */
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    
+    /* Lógica para 3 cards por linha no Desktop */
+    flex: 0 1 calc(33.333% - 30px); 
+    min-width: 300px; /* Garante que não fique muito espremido */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.how-it-works-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 10px 30px -10px rgba(100, 255, 218, 0.3);
 }
 
 .step-number {
-    width: 60px;
-    height: 60px;
-    background: var(--light-bg);
-    border: 2px solid var(--primary-blue);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--neon-blue);
+    color: var(--dark-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 0 15px var(--neon-blue);
+    z-index: 2;
+}
+
+.step-icon {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+}
+
+.how-it-works-card h3 {
+    color: var(--white);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.how-it-works-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Responsividade para os Steps */
+@media (max-width: 992px) {
+    .how-it-works-card {
+        flex: 0 1 calc(50% - 30px); /* 2 por linha em tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .how-it-works-card {
+        flex: 0 1 100%; /* 1 por linha no celular */
+    }
+}
+
+/* Antigo (Removendo estilos legados se não forem usados, ou mantendo para compatibilidade) */
+.step-number-legacy {
+    width: 60px; height: 60px; background: var(--light-bg); border: 2px solid var(--primary-blue);
     color: var(--white);
     border-radius: 50%;
     display: flex;
@@ -437,6 +614,7 @@ h1, h2, h3, .logo {
     border-radius: 4px;
     cursor: pointer;
     transition: opacity 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
 }
 
 .btn-submit:hover {
@@ -473,9 +651,51 @@ footer {
 
 /* Mobile */
 @media (max-width: 768px) {
-    .nav-links { display: none; } /* Simplificação para o exemplo */
-    .menu-toggle { display: block; }
-    .hero h1 { font-size: 2.5rem; }
+    .nav-links {
+        position: fixed;
+        right: -100%;
+        top: 70px; /* Altura da navbar */
+        height: calc(100vh - 70px);
+        background-color: rgba(2, 12, 27, 0.98);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        transition: right 0.4s ease-in-out;
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(100, 255, 218, 0.1);
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .menu-toggle { 
+        display: block;
+        z-index: 1001;
+    }
+
+    /* Animação do ícone de menu */
+    .menu-toggle.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    .menu-toggle.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .hero h1 { font-size: 2.2rem; }
+    .hero p { font-size: 1rem; padding: 0 15px; }
+    
+    .about-card, .how-it-works-card {
+        flex: 0 1 100%; /* 1 por linha no celular */
+    }
+    
+    .section-title { font-size: 2rem; }
+    .about-description-box { padding: 1.5rem; font-size: 1rem; }
 }
 
 /* Fallback: Se o JavaScript falhar ou for bloqueado, mostra o conteúdo forçadamente */
