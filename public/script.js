@@ -28,9 +28,9 @@
     const registrationForm = document.getElementById('registrationForm');
 
     if (registrationForm) {
-        // Lógica de Prazo: Bloqueia o formulário após 04/03/2026 às 23:59
+        // Lógica de Prazo: Bloqueia o formulário após 13/03/2026 às 23:59
         // O sufixo -03:00 garante que o horário seja respeitado no fuso de Brasília/Ceará
-        const deadline = new Date('2026-03-03T23:59:59-03:00');
+        const deadline = new Date('2026-03-13T23:59:59-03:00');
         const now = new Date();
 
         if (now > deadline) {
@@ -54,7 +54,7 @@
             });
 
             if (messageEl) {
-                messageEl.textContent = 'O prazo para inscrições encerrou no dia 04/03 às 23:59.';
+                messageEl.textContent = 'O prazo para inscrições encerrou no dia 13/03 às 23:59.';
                 messageEl.classList.add('error');
             }
 
