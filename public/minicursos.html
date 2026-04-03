@@ -162,6 +162,10 @@
         }
 
         function renderMinicursos() {
+            // Sort by date: Segunda → Terça → Quarta → Quinta
+            const dateOrder = {'Segunda':1, 'Terça':2, 'Quarta':3, 'Quinta':4};
+            minicursosData.sort((a, b) => dateOrder[a.data] - dateOrder[b.data]);
+            
             const grid = document.getElementById('minicursos-grid');
             grid.innerHTML = '';
             minicursosData.forEach(mc => {

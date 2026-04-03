@@ -56,29 +56,29 @@ const initDb = async () => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`);
 
-        // Clear existing minicursos and seed 15+ real events from user data
+        // Clear existing minicursos and seed 14 real events from user data
         await pool.query('DELETE FROM minicursos');
         
         await pool.query(`
             INSERT INTO minicursos (nome, ministrante, data, horario, local, vagas_maximas) 
             VALUES 
-                ('Carreiras Híbridas na era Digital', 'LUCAS FERREIRA COSTA', 'Quinta', '09:40 às 11:40', 'Auditório ou Mini Auditório', 20),
-                ('Utilização de Blockchain', 'LUCAS FERREIRA COSTA', 'Quinta', '18:20 às 22:00', 'Laboratórios', 20),
-                ('Introdução ao Desenvolvimento de Jogos Digitais', 'PEDRO LUIS', 'Segunda', '18:20 às 20:00 / 20:20 às 22:00', 'Laboratórios', 20),
-                ('Competências Profissionais e o Novo Mercado de Trabalho', 'EDNAEL MACEDO', 'Quarta', '09:40 às 11:40', 'Laboratórios / Auditório ou Mini Auditório', 20),
-                ('Aplicação Full-Stack com React e Supabase', 'JOSÉ OLINDA', 'Quarta', '18:20 às 20:00 / 20:20 às 22:00', 'Laboratórios', 20),
-                ('Pitch: do Zero à Apresentação', 'LUCAS NOGUEIRA', 'Terça', '09:40 às 11:40', 'Auditório ou Mini Auditório / Laboratórios', 20),
-                ('Introdução ao python: programando um assistente virtual no Colab', 'LYRANE TEIXEIRA', 'Quinta', '09:40 às 11:40', 'Laboratórios', 20),
-                ('Do Sertão à América: uma jornada até a Universidade de Cincinnati', 'MICHAEL LOPES', 'Quinta', '09:40 às 11:40', 'Auditório ou Mini Auditório', 20),
-                ('Fundamentos Elementares de Análise com Dados', 'DIEGO TEIXEIRA', 'Quinta', '18:20 às 20:00', 'Laboratórios', 20),
-                ('Construindo o primeiro milhão', 'RONALDO DUARTE', 'Quarta', '18:20 às 20:00', 'Laboratórios', 20),
-                ('Figma do Zero ao Protótipo', 'SAMUEL LIMA', 'Terça', '09:40 às 11:40', 'Laboratórios', 20),
-                ('Liderança em Design para Tecnologia. Subtítulo: Como liderar pessoas, projetos e soluções em Sistemas de Informação', 'RAQUEL LIRA', 'Quinta', '20:20 às 22:00', 'Laboratórios', 20),
-                ('Oficina de Desenvolvimento de Jogos 2D com GDevelop', 'FRANCISCO HENRIQUE', 'Terça', '18:20 às 20:00', 'Laboratórios', 20),
-                ('TEORIA DAS CORES & DESIGN BÁSICA', 'Julio Cesar', 'Terça', '18:20 às 20:00', 'Laboratórios', 20)
+                ('Competências Profissionais e o Novo Mercado de Trabalho', 'EDNAEL MACEDO', 'Quarta', '09:40 às 11:40', 'Lab 4', 20),
+                ('Construindo o Primeiro Milhão', 'RONALDO DUARTE', 'Quarta', '18:20 às 20:00', 'Lab 4', 20),
+                ('Aplicação Full-Stack com React e Supabase', 'JOSÉ OLINDA', 'Quarta', '18:20 às 20:00', 'Lab 3', 20),
+                ('Carreiras Híbridas na era Digital', 'LUCAS FERREIRA COSTA', 'Quinta', '09:40 às 11:40', 'Auditorio', 20),
+                ('Introdução ao Python: Programando um Assistente Virtual no Colab', 'LYRANE TEIXEIRA', 'Quarta', '09:40 às 11:40', 'Lab 3', 20),
+                ('Do Sertão à América: Uma Jornada até a Universidade de Cincinnati', 'MICHAEL LOPES', 'Quinta', '09:40 às 11:40', 'Auditorio', 20),
+                ('Fundamentos Elementares de Análise com Dados', 'DIEGO TEIXEIRA', 'Quinta', '18:20 às 20:00', 'Lab 3', 20),
+                ('Introdução Prática ao Blockchain Empresarial com Firefly e Hyperladger', 'LUCAS FERREIRA COSTA', 'Quinta', '18:20 às 22:00', 'Lab 4', 20),
+                ('Liderança em Design para Tecnologia', 'RAQUEL LIRA', 'Quinta', '20:20 às 22:00', 'Lab 3', 20),
+                ('Introdução ao Desenvolvimento de Jogos Digitais', 'PEDRO LUIS', 'Segunda', '18:20 às 22:00', 'Lab 4', 20),
+                ('Pitch: Do Zero à Apresentação', 'LUCAS NOGUEIRA', 'Terça', '09:40 às 11:40', 'Lab 4', 20),
+                ('Figma do Zero ao Protótipo', 'SAMUEL LIMA', 'Terça', '09:40 às 11:40', 'Lab 3', 20),
+                ('Teoria das Cores & Design Básica', 'Julio Cesar', 'Terça', '18:20 às 20:00', 'Lab 4', 20),
+                ('Oficina de Desenvolvimento de Jogos 2D com GDevelop', 'FRANCISCO HENRIQUE', 'Terça', '18:20 às 20:00', 'Lab 3', 20)
         `);
 
-        console.log('✅ DB inicializado: teams + minicursos(14 real seeded) + inscricoes');
+        console.log('✅ DB inicializado: teams + minicursos(14 real seeded + user specs) + inscricoes');
     } catch (err) {
         console.error('❌ Erro initDb:', err.message);
     }
@@ -87,3 +87,4 @@ const initDb = async () => {
 initDb().catch(console.error);
 
 module.exports = pool;
+
