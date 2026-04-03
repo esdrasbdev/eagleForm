@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test DB</title></head>
+<body>
+    <h1>Test APIs</h1>
+    <button onclick="testMinicursos()">Test Minicursos</button>
+    <button onclick="testDB()">Test DB Check</button>
+    <pre id="output"></pre>
+    <script>
+        async function testMinicursos() {
+            try {
+                const res = await fetch('/api/minicursos');
+                const data = await res.json();
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('output').textContent = e.message;
+            }
+        }
+        async function testDB() {
+            const res = await fetch('/api/db-check');
+            const data = await res.json();
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

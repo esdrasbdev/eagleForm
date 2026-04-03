@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minicursos | Eagle Event</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Minicursos cards - Compact & Beautiful */
+        .minicursos-hero { background: linear-gradient(135deg, #0a192f 0%, #1a237e 100%); min-height: 60vh; }
+        .minicursos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+        .minicurso-card { background: rgba(10,25,47,0.9); border: 1px solid rgba(139,92,246,0.2); border-radius: 20px; overflow: hidden; transition: all 0.4s ease; height: 380px; display: flex; flex-direction: column; }
+        .minicurso-card:hover { transform: translateY(-8px); border-color: #8b5cf6; box-shadow: 0 25px 50px rgba(139,92,246,0.25); }
+        .card-header { background: linear-gradient(135deg, #8b5cf6, #007bff); padding: 1.25rem 1.25rem 1rem; }
+        .card-title { color: white; font-family: 'Orbitron', sans-serif; margin: 0 0 0.25rem 0; font-size: 1.1rem; line-height: 1.3; }
+        .card-ministrante { color: rgba(255,255,255,0.92); font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem; }
+        .card-details { padding: 1rem 1.25rem 0.5rem; display: flex; flex-direction: column; flex: 1; }
+        .btn-inscrever { margin-top: auto; padding: 0.85rem 1rem; border-radius: 12px; font-weight: 700; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.82rem; color: #a0b2c5; gap: 0.5rem; }
+        .card-meta span { display: flex; align-items: center; gap: 0.3rem; }
+        .vagas-info { font-weight: 600; color: #64ffda; font-size: 0.9rem; background: rgba(100,255,218,0.08); border-radius: 10px; padding: 0.75rem 0.75rem 0.5rem; border-left: 3px solid #64ffda; }
+        .full { color: #ff6b6b !important; border-left-color: #ff6b6b; background: rgba(255,107,107,0.08) !important; }
+        .vagas-count { font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .vagas-progress { height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; margin: 0.4rem 0; }
+        .vagas-progress-fill { height: 100%; background: linear-gradient(90deg, #64ffda, #00d4aa); border-radius: 3px; transition: width 0.4s ease; box-shadow: 0 0 10px #64ffda; }
+        .vagas-remaining { font-size: 0.85rem; opacity: 0.9; }
+        .btn-inscrever { width: 100%; padding: 0.85rem 1rem; margin-top: 0.75rem; background: linear-gradient(135deg, #8b5cf6, #007bff); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+        .btn-inscrever:hover:not(.disabled) { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(139,92,246,0.4); }
+        .btn-inscrever.disabled { opacity: 0.6; cursor: not-allowed; background: #4a5568; box-shadow: none; }
+        .skeleton { background: linear-gradient(90deg, #233554 25%, #1a1a2e 50%, #233554 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Modal styles unchanged */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,12,27,0.95); z-index: 1000; backdrop-filter: blur(10px); }
+        .modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #112240; padding: 2rem; border-radius: 16px; border: 1px solid #8b5cf6; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { color: #8b5cf6; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; color: #64ffda; margin-bottom: 0.5rem; }
+        .form-group input { width: 100%; padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid #233554; border-radius: 8px; color: white; }
+        .modal-buttons { display: flex; gap: 1rem; justify-content: flex-end; }
+        .btn-primary { background: #8b5cf6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; }
+        .btn-secondary { background: transparent; color: #64ffda; border: 1px solid #64ffda; }
+
+        /* Back arrow styles */
+        .logo-back-container {
+            display: flex;
+            align-items: center;
+        }
+        .back-arrow {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+        .logo:hover .back-arrow {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo-back-container">
+                <a href="index.html" class="logo" title="Voltar ao site principal">
+                    <i class="fas fa-arrow-left back-arrow" aria-hidden="true"></i>
+                    <img src="logoEagle.png" alt="Eagle Event - Voltar">
+                </a>
+            </div>
+<ul class="nav-links">
+            </ul>
+            <!-- Menu toggle hidden - empty nav -->
+        </div>
+    </nav>
+
+<section class="hero minicursos-hero" style="background: linear-gradient(rgba(10,25,47,0.85), rgba(2,12,27,0.9)), url('imagem_6.jpeg') center/cover;">
+        <div class="container hero-content">
+            <div class="hero-badge" data-aos="fade-down">14 Minicursos • 20 Vagas Cada</div>
+            <div class="hero-stats" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="14">0</span>
+                    <span class="stat-label">Cursos Disponíveis</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="280">0</span>
+                    <span class="stat-label">Vagas Totais</span>
+                </div>
+            </div>
+            <h1 data-aos="fade-down" data-aos-duration="1000">Masterclasses com Experts</h1>
+            <p data-aos="fade-up" data-aos-delay="200">Workshops práticos liderados por profissionais do mercado. Aprendizado hands-on em IA, Cloud, DevOps e mais.</p>
+            <button class="btn-cta" data-aos="zoom-in" data-aos-delay="400" onclick="loadMinicursos()"><i class="fas fa-search"></i> Explorar Cursos</button>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div id="minicursos-grid" class="minicursos-grid" data-aos="fade-up">
+                <!-- Skeleton loaders -->
+                <div class="minicurso-card skeleton" style="height: 300px;"></div>
+                <div class="minicurso-card skeleton" style="height: 300px;"></div>
+                <div class="minicurso-card skeleton" style="height: 300px;"></div>
+                <div class="minicurso-card skeleton" style="height: 300px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal unchanged -->
+    <div id="inscricaoModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <i class="fas fa-clipboard-list"></i>
+                <h3 id="modalTitle">Inscrever-se</h3>
+            </div>
+            <form id="inscricaoForm">
+                <input type="hidden" id="modalMinicursoId">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="modalNome" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Curso *</label>
+                    <input type="text" id="modalCurso" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Semestre/Turma *</label>
+                    <input type="text" id="modalSemestre" required maxlength="50">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Confirmar Inscrição</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts unchanged -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="minicursos.js"></script>
+    <script src="minicursos-stats.js"></script>
+    <script>
+        AOS.init({ duration: 800 });
+
+        let minicursosData = [];
+        let pollInterval;
+
+        async function loadMinicursos() {
+            try {
+                const res = await fetch('/api/minicursos');
+                if (!res.ok) return;
+                const response = await res.json();
+                minicursosData = response.data || [];
+                renderMinicursos();
+            } catch (err) {
+                console.error('Erro load:', err);
+            }
+        }
+
+        function renderMinicursos() {
+            const grid = document.getElementById('minicursos-grid');
+            grid.innerHTML = '';
+            minicursosData.forEach(mc => {
+                const card = document.createElement('div');
+                card.className = 'standard-card minicurso-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3 class="card-title">${mc.nome}</h3>
+                        <div class="card-ministrante"><i class="fas fa-user-tie"></i> ${mc.ministrante}</div>
+                        <div class="card-meta">
+                            <span title="${mc.data}"><i class="fas fa-calendar-alt"></i> ${mc.data}<br><small>${mc.horario}</small></span>
+                            <span title="${mc.local || 'TBA'}"><i class="fas fa-map-marker-alt"></i> ${mc.local || 'TBA'}</span>
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        <div class="vagas-info ${mc.vagas_restantes <= 0 ? 'full' : ''}">
+                            <div class="vagas-count">${mc.inscritos}/${mc.vagas_maximas}</div>
+                            <div class="vagas-progress"><div class="vagas-progress-fill" style="width: ${ (mc.inscritos / mc.vagas_maximas * 100).toFixed(0) }%;"></div></div>
+                            <div class="vagas-remaining">${mc.vagas_restantes > 0 ? `${mc.vagas_restantes} vagas` : 'ESGOTADO'}</div>
+                        </div>
+                        <button class="btn-inscrever ${mc.vagas_restantes <= 0 ? 'disabled' : ''}" 
+                                onclick="openModal(${mc.id})" ${mc.vagas_restantes <= 0 ? 'disabled' : ''}>
+                            <i class="fas ${mc.vagas_restantes <= 0 ? 'fa-lock' : 'fa-user-plus'}"></i>
+                            ${mc.vagas_restantes <= 0 ? 'ESGOTADO' : 'Inscrever-se'}
+                        </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(id) {
+            const mc = minicursosData.find(m => m.id === id);
+            if (!mc || mc.vagas_restantes <= 0) return;
+            document.getElementById('modalMinicursoId').value = id;
+            document.getElementById('modalTitle').textContent = `Inscrever - ${mc.nome}`;
+            const modal = document.getElementById('inscricaoModal');
+            modal.style.display = 'block';
+            setTimeout(() => modal.querySelector('.modal').classList.add('show'), 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('inscricaoModal');
+            modal.querySelector('.modal').classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.getElementById('inscricaoForm').reset();
+            }, 400);
+        }
+
+        document.getElementById('inscricaoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                minicurso_id: parseInt(document.getElementById('modalMinicursoId').value),
+                nome: document.getElementById('modalNome').value.trim(),
+                curso: document.getElementById('modalCurso').value.trim(),
+                semestre: document.getElementById('modalSemestre').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/inscricoes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    Swal.fire('Sucesso!', result.message, 'success');
+                    closeModal();
+                    loadMinicursos();
+                } else {
+                    Swal.fire('Erro', result.error, 'error');
+                }
+            } catch (err) {
+                Swal.fire('Erro', 'Falha na conexão.', 'error');
+            }
+        });
+
+        function startPolling() {
+            loadMinicursos();
+            pollInterval = setInterval(loadMinicursos, 10000);
+        }
+
+        document.getElementById('mobile-menu')?.addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        document.getElementById('inscricaoModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        startPolling();
+    </script>
+</body>
+</html>

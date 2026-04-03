@@ -237,6 +237,88 @@ app.get('/api/participants', authMiddleware, async (req, res) => {
     }
 });
 
+// ===== MINICURSOS APIs =====
+
+// GET /api/minicursos - Lista pública com contagem inscritos
+app.get('/api/minicursos', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT m.*, 
+                   COALESCE((SELECT COUNT(*) FROM inscricoes WHERE minicurso_id = m.id), 0) as inscritos,
+                   (m.vagas_maximas - COALESCE((SELECT COUNT(*) FROM inscricoes WHERE minicurso_id = m.id), 0)) as vagas_restantes
+            FROM minicursos m
+            ORDER BY m.data, m.horario
+        `);
+        res.json({ data: result.rows });
+    } catch (err) {
+        console.error('Erro listar minicursos:', err);
+        res.status(500).json({ error: 'Erro ao buscar minicursos.' });
+    }
+});
+
+// POST /api/inscricoes - Criar inscrição
+app.post('/api/inscricoes', async (req, res) => {
+    const { minicurso_id, nome, curso, semestre } = req.body;
+
+    // Validações
+    if (!minicurso_id || !nome || !curso || !semestre) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+    }
+    if (nome.length > 100 || curso.length > 100 || semestre.length > 50) {
+        return res.status(400).json({ error: 'Campos muito longos.' });
+    }
+
+    try {
+        // Check vagas disponíveis
+        const vagasCheck = await db.query(
+            'SELECT vagas_maximas, (SELECT COUNT(*) FROM inscricoes i WHERE i.minicurso_id = $1) as current FROM minicursos WHERE id = $1',
+            [minicurso_id]
+        );
+        if (vagasCheck.rows.length === 0) {
+            return res.status(404).json({ error: 'Minicurso não encontrado.' });
+        }
+        const { vagas_maximas, current } = vagasCheck.rows[0];
+        if (current >= vagas_maximas) {
+            return res.status(400).json({ error: 'Vagas esgotadas para este minicurso.' });
+        }
+
+        // Insert
+        const result = await db.query(
+            'INSERT INTO inscricoes (minicurso_id, nome, curso, semestre) VALUES ($1, $2, $3, $4) RETURNING id',
+            [minicurso_id, nome, curso, semestre]
+        );
+
+        res.json({ message: 'Inscrição realizada com sucesso!', id: result.rows[0].id });
+    } catch (err) {
+        console.error('Erro inscrição:', err);
+        res.status(500).json({ error: 'Erro ao processar inscrição.' });
+    }
+});
+
+// Admin: List minicursos + inscricoes por curso
+app.get('/api/admin/minicursos', authMiddleware, async (req, res) => {
+    try {
+        const minicursos = await db.query(`
+            SELECT m.*, COALESCE(i.count, 0) as total_inscritos
+            FROM minicursos m
+            LEFT JOIN (SELECT minicurso_id, COUNT(*) as count FROM inscricoes GROUP BY minicurso_id) i ON m.id = i.minicurso_id
+        `);
+
+        const detalhe = [];
+        for (const mc of minicursos.rows) {
+            const inscs = await db.query(
+                'SELECT * FROM inscricoes WHERE minicurso_id = $1 ORDER BY created_at DESC',
+                [mc.id]
+            );
+            detalhe.push({ ...mc, inscricoes: inscs.rows });
+        }
+        res.json({ data: detalhe });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro admin minicursos.' });
+    }
+});
+
 // Rota utilitária para resetar a contagem de IDs (Use após apagar inscrições)
 app.get('/api/reset-sequence', authMiddleware, async (req, res) => {
     try {
