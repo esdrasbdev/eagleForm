@@ -256,6 +256,8 @@ app.get('/api/minicursos', async (req, res) => {
     }
 });
 
+
+
 // POST /api/inscricoes - Criar inscrição
 app.post('/api/inscricoes', async (req, res) => {
     const { minicurso_id, nome, curso, semestre } = req.body;
@@ -280,6 +282,19 @@ app.post('/api/inscricoes', async (req, res) => {
         const { vagas_maximas, current } = vagasCheck.rows[0];
         if (current >= vagas_maximas) {
             return res.status(400).json({ error: 'Vagas esgotadas para este minicurso.' });
+        }
+
+        // ✅ Check duplicata: mesmo aluno no mesmo minicurso
+        const duplicateCheck = await db.query(
+            `SELECT id, nome FROM inscricoes 
+             WHERE minicurso_id = $1 AND nome = $2 AND curso = $3 AND semestre = $4 
+             LIMIT 1`,
+            [minicurso_id, nome, curso, semestre]
+        );
+        if (duplicateCheck.rows.length > 0) {
+            return res.status(400).json({ 
+                error: `Você (${nome}) já está inscrito neste minicurso.` 
+            });
         }
 
         // Insert
