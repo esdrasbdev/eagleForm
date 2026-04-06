@@ -1,12 +1,44 @@
+# Core ignores
 node_modules/
-.env
+.env*
+.DS_Store
+.DS_Store?
+Thumbs.db
+
+# Logs & temp
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+eagle.db
+*.sqlite*
+*.sqlite3
+
+# Builds
 /dist
 /build
-eagle.db
-.env.local
-npm-debug.log*
-.DS_Store
-package-lock.json
-package.json
-.vercel.json
+out/
+.next/
+
+# OS/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencies lock (add if large)
+# package-lock.json
+
+# Deployment configs (sensitive)
+vercel.json
+netlify.toml
+*.config.js
+
+# Sensitive files
+config.json
+secrets*.json
+private*.json
+keys*.json
+.env*.local
