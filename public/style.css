@@ -727,7 +727,7 @@ h1, h2, h3, .logo {
 /* About Grid */
 .about-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     justify-items: center;
 }
@@ -928,7 +928,7 @@ h1, h2, h3, .logo {
 /* Steps */
 .how-it-works-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     justify-items: center;
     margin-top: 2rem;
@@ -1020,6 +1020,22 @@ h1, h2, h3, .logo {
 @media (max-width: 768px) {
     .how-it-works-card {
         flex: 0 1 100%; /* 1 por linha no celular */
+    }
+}
+
+.centralized-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+@media (max-width: 992px) {
+    .centralized-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
     }
 }
 
