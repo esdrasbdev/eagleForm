@@ -91,8 +91,14 @@
 
         <!-- Minicursos Section -->
         <div id="minicursosSection" style="display: none;">
-            <h2 class="section-title">📚 Minicursos & Inscrições</h2>
-            <div id="adminMinicursosList"></div>
+<h2 class="section-title">📚 Minicursos & Inscrições</h2>
+            <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+              <input type="text" id="searchMinicursos" placeholder="🔍 Nome do minicurso ou ministrante..." style="flex:1; padding: 12px 16px; background: #0a192f; border: 1px solid #233554; color: #ccd6f6; border-radius: 8px; font-size: 1rem;">
+              <button id="btnClearSearch" style="padding: 12px 20px; background: linear-gradient(135deg, #ff6b6b, #ff5252); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: opacity 0.3s;">Limpar</button>
+            </div>
+            <div id="minicursosContainer">
+              <div id="adminMinicursosList"></div>
+            </div>
         </div>
     </div>
 
@@ -103,6 +109,8 @@
         .admin-inscrito { background: rgba(10,25,47,0.7); padding: 0.75rem; margin-bottom: 0.4rem; border-radius: 10px; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center; }
         .admin-inscrito strong { color: #64ffda; }
         .admin-empty { color: #8892b0; font-style: italic; text-align: center; padding: 2rem; }
+        .no-results { color: #8892b0; font-style: italic; text-align: center; padding: 3rem; font-size: 1.1rem; }
+        .search-active .admin-minicurso:not(.match) { display: none; }
     </style>
 
     <script>
@@ -182,6 +190,8 @@
                 });
             }
 
+            let allMinicursosData = [];
+
             // Admin Minicursos
             async function loadAdminMinicursos(user, pass) {
                 const headers = { 'Authorization': 'Basic ' + btoa(user + ':' + pass) };
@@ -189,42 +199,95 @@
                     const res = await fetch('/api/admin/minicursos', { headers });
                     if (res.ok) {
                         const result = await res.json();
-                        renderAdminMinicursos(result.data);
+                        allMinicursosData = result.data;
+                        renderFilteredMinicursos('');
                     }
                 } catch (e) {
                     console.error('Erro admin minicursos:', e);
                 }
             }
 
-            function renderAdminMinicursos(data) {
-                const container = document.getElementById('adminMinicursosList');
-                container.innerHTML = '';
-                data.forEach(mc => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-minicurso';
-                    div.innerHTML = `
-                        <div class="admin-header">
-                            <h4>${mc.nome}</h4>
-                            <span>(${mc.total_inscritos}/${mc.vagas_maximas})</span>
-                        </div>
-                        <div style="font-size: 0.9rem; color: #a0b2c5; margin-bottom: 1rem;">
-                            <strong>👤 ${mc.ministrante}</strong> | 📅 ${mc.data} ${mc.horario} | 📍 ${mc.local || 'TBA'}
-                        </div>
-                        ${mc.inscricoes.length > 0 ? mc.inscricoes.map(insc => `
-                            <div class="admin-inscrito">
-                                <div>
-                                    <strong>${insc.nome}</strong><br>
-                                    <small>${insc.curso} - ${insc.semestre}</small>
-                                </div>
-                                <small>${new Date(insc.created_at).toLocaleDateString('pt-BR')} ${new Date(insc.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</small>
+            function renderFilteredMinicursos(query = '') {
+                const listContainer = document.getElementById('adminMinicursosList');
+                const container = document.getElementById('minicursosContainer');
+                
+                const lowerQuery = query.toLowerCase().trim();
+                if (!lowerQuery) {
+                    // Show all
+                    listContainer.innerHTML = '';
+                    allMinicursosData.forEach(mc => {
+                        const div = document.createElement('div');
+                        div.className = 'admin-minicurso';
+                        div.innerHTML = `
+                            <div class="admin-header">
+                                <h4>${mc.nome}</h4>
+                                <span>(${mc.total_inscritos}/${mc.vagas_maximas})</span>
                             </div>
-                        `).join('') : '<div class="admin-empty">Nenhuma inscrição ainda.</div>'}
-                    `;
-                    container.appendChild(div);
-                });
+                            <div style="font-size: 0.9rem; color: #a0b2c5; margin-bottom: 1rem;">
+                                <strong>👤 ${mc.ministrante}</strong> | 📅 ${mc.data} ${mc.horario} | 📍 ${mc.local || 'TBA'}
+                            </div>
+                            ${mc.inscricoes && mc.inscricoes.length > 0 ? mc.inscricoes.map(insc => `
+                                <div class="admin-inscrito">
+                                    <div>
+                                        <strong>${insc.nome}</strong><br>
+                                        <small>${insc.curso} - ${insc.semestre}</small>
+                                    </div>
+                                    <small>${new Date(insc.created_at).toLocaleDateString('pt-BR')} ${new Date(insc.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</small>
+                                </div>
+                            `).join('') : '<div class="admin-empty">Nenhuma inscrição ainda.</div>'}
+                        `;
+                        listContainer.appendChild(div);
+                    });
+                    return;
+                }
+
+                // Filter
+                const filtered = allMinicursosData.filter(mc => 
+                    mc.nome.toLowerCase().includes(lowerQuery) || 
+                    mc.ministrante.toLowerCase().includes(lowerQuery)
+                );
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="no-results">🔍 Nenhum minicurso encontrado. Tente outro termo (nome ou ministrante).</div>';
+                } else {
+                    listContainer.innerHTML = '';
+                    filtered.forEach(mc => {
+                        const div = document.createElement('div');
+                        div.className = 'admin-minicurso match';
+                        div.innerHTML = `
+                            <div class="admin-header">
+                                <h4>${mc.nome}</h4>
+                                <span>(${mc.total_inscritos}/${mc.vagas_maximas})</span>
+                            </div>
+                            <div style="font-size: 0.9rem; color: #a0b2c5; margin-bottom: 1rem;">
+                                <strong>👤 ${mc.ministrante}</strong> | 📅 ${mc.data} ${mc.horario} | 📍 ${mc.local || 'TBA'}
+                            </div>
+                            ${mc.inscricoes && mc.inscricoes.length > 0 ? mc.inscricoes.map(insc => `
+                                <div class="admin-inscrito">
+                                    <div>
+                                        <strong>${insc.nome}</strong><br>
+                                        <small>${insc.curso} - ${insc.semestre}</small>
+                                    </div>
+                                    <small>${new Date(insc.created_at).toLocaleDateString('pt-BR')} ${new Date(insc.created_at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</small>
+                                </div>
+                            `).join('') : '<div class="admin-empty">Nenhuma inscrição ainda.</div>'}
+                        `;
+                        listContainer.appendChild(div);
+                    });
+                }
             }
 
             // Tabs
+            // Search event listeners
+            document.getElementById('searchMinicursos').addEventListener('input', (e) => {
+                renderFilteredMinicursos(e.target.value);
+            });
+
+            document.getElementById('btnClearSearch').addEventListener('click', () => {
+                document.getElementById('searchMinicursos').value = '';
+                renderFilteredMinicursos('');
+            });
+
             window.showSection = function(section) {
                 document.getElementById('teamsSection').style.display = section === 'teams' ? 'block' : 'none';
                 document.getElementById('minicursosSection').style.display = section === 'minicursos' ? 'block' : 'none';
