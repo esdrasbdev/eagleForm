@@ -92,12 +92,46 @@ const initDb = async () => {
                     'Figma UI: layouts, protótipos, telas funcionais.', 'Laboratório com computadores e acesso à internet. Cada participante deve possuir (ou criar) uma conta gratuita no Figma.'),
                     ('Teoria das Cores & Design Básica', 'Julio Cesar', 'Terça', '18:20 às 20:00', 'Lab 4', 20, 
                     'Teoria cores/design: harmonia, contrastes visuais.', NULL),
-                    ('Oficina de Desenvolvimento de Jogos 2D com GDevelop', 'FRANCISCO HENRIQUE', 'Terça', '18:20 às 20:00', 'Lab 3', 20, 
-                    'Jogos 2D GDevelop top-down: sem código prático.', NULL)
+('Oficina de Desenvolvimento de Jogos 2D com GDevelop', 'FRANCISCO HENRIQUE', 'Terça', '18:20 às 20:00', 'Lab 3', 20, 
+                    'Jogos 2D GDevelop top-down: sem código prático.', NULL),
+                    ('Figma do Zero ao Protótipo', 'Samuel Lima', 'Quarta', '09:40 às 11:40', 'Laboratórios', 20, 
+                    'Figma UI: layouts, protótipos, telas funcionais.', 'Laboratório com computadores e acesso à internet. Cada participante deve possuir (ou criar) uma conta gratuita no Figma.'),
+                    ('Criptocoins: A evolução do dinheiro na era dos sistemas distribuídos', 'Danne Makleyston', 'Quinta', '20:20 às 22:00', 'Lab 4', 20, 
+                    'Blockchain e criptomoedas: consenso distribuído, wallets, smart contracts, DeFi basics.', 'Computador com acesso à internet, Data Show')
             `);
-            console.log('✅ Seed executado: 14 minicursos criados.');
+console.log('✅ Seed executado: 16 minicursos criados.');
         } else {
             console.log(`✅ ${count} minicursos existentes. SEED PULADO para preservar inscrições!`);
+            
+            // ✅ FORCE ADD MISSING MINICURSOS (não deleta dados existentes)
+            console.log('🔍 Verificando/Forçando adição dos 2 novos minicursos...');
+            
+            const missing1 = await pool.query('SELECT COUNT(*) as count FROM minicursos WHERE nome = $1 AND data = $2', ['Figma do Zero ao Protótipo', 'Quarta']);
+            if (parseInt(missing1.rows[0].count) === 0) {
+                await pool.query(`
+                    INSERT INTO minicursos (nome, ministrante, data, horario, local, vagas_maximas, descricao, material) 
+                    VALUES ('Figma do Zero ao Protótipo', 'Samuel Lima', 'Quarta', '09:40 às 11:40', 'Lab 3', 20, 
+                    'Design de Interfaces (UI) e Prototipação', 'Laboratório com computadores e acesso à internet. Conta Figma gratuita.')
+                `);
+                console.log('✅ Adicionado: Figma Quarta (Samuel Lima)');
+            }
+            
+            const missing2 = await pool.query('SELECT COUNT(*) as count FROM minicursos WHERE nome = $1', ['Criptocoins: A evolução do dinheiro na era dos sistemas distribuídos']);
+            if (parseInt(missing2.rows[0].count) === 0) {
+                await pool.query(`
+                    INSERT INTO minicursos (nome, ministrante, data, horario, local, vagas_maximas, descricao, material) 
+                    VALUES ('Criptocoins: A evolução do dinheiro na era dos sistemas distribuídos', 'Danne Makleyston', 'Quinta', '20:20 às 22:00', 'Lab 4', 20, 
+                    'Blockchain e criptomoedas: consenso distribuído, wallets, smart contracts, DeFi basics.', 'Computador com acesso à internet, Data Show')
+                `);
+                console.log('✅ Adicionado: Criptocoins Quinta (Danne Makleyston)');
+            }
+            
+            const finalCount = await pool.query('SELECT COUNT(*) as count FROM minicursos');
+            console.log(`✅ Total final: ${parseInt(finalCount.rows[0].count)} minicursos`);
+            
+            // ✅ UPDATE LOCAL Figma Quarta para Lab 3
+            await pool.query("UPDATE minicursos SET local = 'Lab 3' WHERE nome = 'Figma do Zero ao Protótipo' AND data = 'Quarta'");
+            console.log('✅ Local Figma Quarta atualizado para Lab 3');
         }
 
         // Log status final

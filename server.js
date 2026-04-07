@@ -311,7 +311,29 @@ app.post('/api/inscricoes', async (req, res) => {
 });
 
 // Admin: List minicursos + inscricoes por curso
+app.post('/api/admin/minicursos', authMiddleware, async (req, res) => {
+  const { nome, ministrante, data, horario, local, vagas_maximas = 20, descricao, material } = req.body;
+  
+  if (!nome || !ministrante || !data || !horario) {
+    return res.status(400).json({ error: 'nome, ministrante, data, horario obrigatórios' });
+  }
+  
+  try {
+    const result = await db.query(`
+      INSERT INTO minicursos (nome, ministrante, data, horario, local, vagas_maximas, descricao, material) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+    `, [nome, ministrante, data, horario, local || null, vagas_maximas, descricao || null, material || null]);
+    
+    res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao criar minicurso' });
+  }
+});
+
+// Admin: List minicursos + inscricoes por curso
 app.get('/api/admin/minicursos', authMiddleware, async (req, res) => {
+
     try {
         const minicursos = await db.query(`
             SELECT m.*, COALESCE(i.count, 0) as total_inscritos
