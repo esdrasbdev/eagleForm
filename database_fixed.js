@@ -96,9 +96,13 @@ const initDb = async () => {
                     'Jogos 2D GDevelop top-down: sem código prático.', NULL),
                     ('Figma do Zero ao Protótipo', 'Samuel Lima', 'Quarta', '09:40 às 11:40', 'Laboratórios', 20, 
                     'Figma UI: layouts, protótipos, telas funcionais.', 'Laboratório com computadores e acesso à internet. Cada participante deve possuir (ou criar) uma conta gratuita no Figma.'),
-                    ('Criptocoins: A evolução do dinheiro na era dos sistemas distribuídos', 'Danne Makleyston', 'Quinta', '20:20 às 22:00', 'Lab 4', 20, 
-                    'Blockchain e criptomoedas: consenso distribuído, wallets, smart contracts, DeFi basics.', 'Computador com acesso à internet, Data Show')
+('Criptocoins: A evolução do dinheiro na era dos sistemas distribuídos', 'Danne Makleyston', 'Quinta', '20:20 às 22:00', 'Lab 4', 20, 
+                    'Blockchain e criptomoedas: consenso distribuído, wallets, smart contracts, DeFi basics.', 'Computador com acesso à internet, Data Show'),
+
+                    ('Geração de prompt para utilização de IA como ferramenta de produtividade no desenvolvimento', 'Saulo Bezerra', 'Quarta', '20:20 às 22:00', 'Laboratorio', 20, 
+                    'Técnicas de prompt engineering para devs: maximize produtividade com IA generativa.', 'Computador com acesso à internet')
             `);
+
 console.log('✅ Seed executado: 16 minicursos criados.');
         } else {
             console.log(`✅ ${count} minicursos existentes. SEED PULADO para preservar inscrições!`);
@@ -125,6 +129,18 @@ console.log('✅ Seed executado: 16 minicursos criados.');
                 `);
                 console.log('✅ Adicionado: Criptocoins Quinta (Danne Makleyston)');
             }
+
+
+            // ✅ FORCE ADD novo minicurso IA Prompt (Quarta-feira)
+            // Force update to Quarta for IA Prompt minicurso
+            await pool.query("DELETE FROM minicursos WHERE nome = 'Geração de prompt para utilização de IA como ferramenta de produtividade no desenvolvimento'");
+            await pool.query(`
+                INSERT INTO minicursos (nome, ministrante, data, horario, local, vagas_maximas, descricao, material) 
+                VALUES ('Geração de prompt para utilização de IA como ferramenta de produtividade no desenvolvimento', 'Saulo Bezerra', 'Quarta', '20:20 às 22:00', 'Laboratorio', 20, 
+                'Técnicas de prompt engineering para devs: maximize produtividade com IA generativa.', 'Computador com acesso à internet')
+            `);
+            console.log('✅ Forced: Geração de Prompt IA to Quarta (Saulo Bezerra)');
+
             
             const finalCount = await pool.query('SELECT COUNT(*) as count FROM minicursos');
             console.log(`✅ Total final: ${parseInt(finalCount.rows[0].count)} minicursos`);
